@@ -1,0 +1,166 @@
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="darkSwitch">
+            <label class="custom-control-label" for="darkSwitch"><%= typeof t !== 'undefined' ? t('nav.darkMode') : 'Dark Mode' %></label>
+          </div>
+        </a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i>
+          <% if(typeof locals.user != 'undefined') { %>
+          <%= locals.user ? user : (typeof t !== 'undefined' ? t('nav.superAdmin') : 'Super Admin') %>
+          <% } else if (typeof locals.us != 'undefined') { %>
+          <%= locals.us ? us : (typeof t !== 'undefined' ? t('nav.user') : 'User') %>
+          <% } %>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+          <a class="dropdown-item" href="/account"><%= typeof t !== 'undefined' ? t('nav.editAccount') : 'Edit Account' %></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/logout"><%= typeof t !== 'undefined' ? t('nav.logout') : 'Logout' %></a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-link">
+      <img src="/images/logo.png" alt="WGS Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light"><b><%= typeof t !== 'undefined' ? t('nav.appName') : 'InnVentory' %></b></span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+                with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <% const dashTitle = typeof t !== 'undefined' ? t('nav.dashboard') : 'Dashboard'; if(locals.title == dashTitle) { %>
+            <a href="/" class="nav-link active">
+            <% } else { %>
+            <a href="/" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                <%= typeof t !== 'undefined' ? t('nav.dashboard') : 'Dashboard' %>
+              </p>
+            </a>
+          </li>
+          <% const stockTitle = typeof t !== 'undefined' ? t('stock.title') : 'Stock'; const stockInTitle = typeof t !== 'undefined' ? t('stockIn.title') : 'Stock In'; const stockOutTitle = typeof t !== 'undefined' ? t('stockOut.title') : 'Stock Out'; if(locals.title == stockTitle || locals.title == stockInTitle || locals.title == stockOutTitle) { %>
+          <li class="nav-item menu-open">
+          <% } else { %>
+          <li class="nav-item">
+          <% } %>
+            <% if(locals.title == stockTitle || locals.title == stockInTitle || locals.title == stockOutTitle) { %>
+            <a href="#" class="nav-link active">
+            <% } else { %>
+            <a href="#" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-boxes"></i>
+              <p>
+                <%= typeof t !== 'undefined' ? t('nav.items') : 'Items' %>
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <% if(locals.title == stockTitle) { %>
+                <a href="/barang" class="nav-link active">
+                <% } else { %>
+                <a href="/barang" class="nav-link">
+                <% } %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('nav.stock') : 'Stock' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <% if(locals.title == stockInTitle) { %>
+                <a href="/barangmasuk" class="nav-link active">
+                <% } else { %>
+                <a href="/barangmasuk" class="nav-link">
+                <% } %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('nav.stockIn') : 'Stock In' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <% if(locals.title == stockOutTitle) { %>
+                <a href="/barangkeluar" class="nav-link active">
+                <% } else { %>
+                <a href="/barangkeluar" class="nav-link">
+                <% } %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('nav.stockOut') : 'Stock Out' %></p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <% const usersTitle = typeof t !== 'undefined' ? t('users.title') : 'Manage Users'; if(typeof locals.user != 'undefined') { %>
+          <li class="nav-item">
+            <% if(locals.title == usersTitle) { %>
+            <a href="/users" class="nav-link active">
+            <% } else { %>
+            <a href="/users" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                <%= typeof t !== 'undefined' ? t('nav.manageUsers') : 'Manage Users' %>
+              </p>
+            </a>
+          </li>
+          <% } %>
+          <% const logTitle = typeof t !== 'undefined' ? t('log.title') : 'App Log'; if(typeof locals.user != 'undefined') { %>
+          <li class="nav-item">
+            <% if(locals.title == logTitle) { %>
+            <a href="/log" class="nav-link active">
+            <% } else { %>
+            <a href="/log" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-clipboard-list"></i>
+              <p>
+                <%= typeof t !== 'undefined' ? t('nav.appLog') : 'App Log' %>
+              </p>
+            </a>
+          </li>
+          <% } %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-globe"></i> <%= typeof lang !== 'undefined' && lang === 'vi' ? 'Tiếng Việt' : 'English' %></a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <% if (typeof lang !== 'undefined' && lang === 'vi') { %>
+              <a class="dropdown-item" href="/lang/en">English</a>
+              <% } else { %>
+              <a class="dropdown-item" href="/lang/vi">Tiếng Việt</a>
+              <% } %>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">

@@ -1,0 +1,22 @@
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+          <div class="col-sm-6">
+            <h1 class="m-0"><%= typeof title !== 'undefined' ? title : (typeof t !== 'undefined' ? t('errors.401') : 'Error 401') %></h1>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="callout callout-warning">
+              <p class="mb-2"><%= typeof t !== 'undefined' ? t('errors.401') : 'Unauthorized' %></p>
+              <a href="/" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('errors.goHome') : 'Go to Dashboard' %></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<%- include('./partials/footer') %>

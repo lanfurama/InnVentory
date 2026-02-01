@@ -1,0 +1,82 @@
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<footer class="main-footer">
+  <strong><%= typeof t !== 'undefined' ? t('footer.copyright') : 'Copyright © 2023 Sava Reyhano. All rights reserved.' %></strong>
+</footer>
+
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+  <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/jquery/jquery.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Bootstrap 4 -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/bootstrap/js/bootstrap.bundle.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<% if (locals.includeQrScanner === true) { %>
+<!-- Html5-QRCode -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/node_modules/html5-qrcode/html5-qrcode.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/html5-qrcode.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<% } %>
+<!-- Select2 -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/select2/js/select2.full.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- DataTables & Plugins -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables/jquery.dataTables.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-responsive/js/dataTables.responsive.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-responsive/js/responsive.bootstrap4.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/dataTables.buttons.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.bootstrap4.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/jszip/jszip.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/pdfmake/pdfmake.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/pdfmake/vfs_fonts.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.html5.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.print.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.colVis.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- AdminLTE App -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/dist/js/adminlte.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Print QR Code script -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/printQR.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Select2 script -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/select2.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- DataTables script -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/datatables.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Page specific script -->
+<script>
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) { location.reload(); }
+  });
+  var darkSwitch = document.getElementById("darkSwitch");
+  function dark() {
+    $('body').addClass('dark-mode');
+    $('.main-header').removeClass('navbar-white navbar-light').addClass('navbar-dark');
+  }
+  function light() {
+    $('body').removeClass('dark-mode');
+    $('.main-header').removeClass('navbar-dark').addClass('navbar-white navbar-light');
+  }
+  function initTheme() {
+    var darkThemeSelected =
+      localStorage.getItem("darkSwitch") !== null &&
+      localStorage.getItem("darkSwitch") === "dark";
+    darkSwitch.checked = darkThemeSelected;
+    darkThemeSelected
+      ? dark()
+      : light()
+  }
+  function resetTheme() {
+    if (darkSwitch.checked) {
+      dark()
+      localStorage.setItem("darkSwitch", "dark");
+    } else {
+      light()
+      localStorage.removeItem("darkSwitch");
+    }
+  }
+</script>
+</body>
+</html>

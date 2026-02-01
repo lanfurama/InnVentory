@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="<%= typeof lang !== 'undefined' && lang === 'vi' ? 'vi' : 'en' %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= locals.title ? title : "Login" %></title>
+
+  <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/fontawesome-free/css/all.min.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
+  <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/dist/css/adminlte.min.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
+  <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/css/login.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/"><%= typeof t !== 'undefined' ? t('nav.appName') : 'InnVentory' %></a>
+  </div>
+  <div class="login-lang text-center">
+    <% if (typeof lang !== 'undefined' && lang === 'vi') { %>
+    <a href="/lang/en" class="btn btn-sm btn-outline-secondary">English</a>
+    <% } else { %>
+    <a href="/lang/vi" class="btn btn-sm btn-outline-secondary">Tiếng Việt</a>
+    <% } %>
+  </div>
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg"><%= typeof t !== 'undefined' ? t('login.signInMessage') : 'Sign in to start your session' %></p>
+      <% if(locals.loginFail){ %> 
+      <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <%= loginFail %> 
+      </div>
+      <% } %> 
+      <% if(locals.logout){ %> 
+      <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <%= logout %> 
+      </div>
+      <% } %> 
+      <form action="/login" method="post">
+        <div class="input-group">
+          <input type="email" name="email" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('login.email') : 'Email' %>" required autocomplete="email">
+          <div class="input-group-append">
+            <div class="input-group-text"><span class="fas fa-envelope"></span></div>
+          </div>
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('login.password') : 'Password' %>" required autocomplete="current-password">
+          <div class="input-group-append">
+            <div class="input-group-text"><span class="fas fa-lock"></span></div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block"><%= typeof t !== 'undefined' ? t('login.signIn') : 'Sign In' %></button>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/jquery/jquery.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Bootstrap 4 -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/bootstrap/js/bootstrap.bundle.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- AdminLTE App -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/dist/js/adminlte.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<%- include('./partials/header') %> 
+<%- include('./partials/nav') %> 
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('account.title') : 'Edit Account' %></h1>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <% if(typeof errors != 'undefined') { %>
+        <% errors.forEach(error => { %> 
+        <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= error.msg %> 
+        </div>
+        <% }) %> 
+        <% } %> 
+        <% if(typeof locals.user != 'undefined' && locals.user != 'superadmin@email.com') { %>
+        <!-- Change Email -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('account.changeEmail') : 'Change Email' %></h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <form action="/account/changeemail?_method=put" method="post">
+            <div class="card-body">
+              <input type="hidden" name="oldEmail" required value="<%= usr.oldEmail || usr.email %>"/>
+              <input type="hidden" name="matchPass" required value="<%= usr.matchPass || usr.password %>"/>
+              <input type="hidden" name="id" required value="<%= usr.id %>"/>
+              <div class="form-group">
+                <label for="oldEmail"><%= typeof t !== 'undefined' ? t('account.currentEmail') : 'Current Email' %> : </label>
+                <%= usr.oldEmail || usr.email %>
+              </div>
+              <div class="form-group">
+                <label for="email"><%= typeof t !== 'undefined' ? t('account.newEmail') : 'New Email' %></label>
+                <input type="email" name="email" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('account.newEmail') : 'New Email' %>" required />
+              </div>
+              <div class="form-group">
+                <label for="password"><%= typeof t !== 'undefined' ? t('account.password') : 'Password' %></label>
+                <input type="password" name="password" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('account.password') : 'Password' %>" required />
+              </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
+            </div>
+          </form>
+        </div>
+        <!-- /.card -->
+        <% } %> 
+        
+        <!-- Change Password -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('account.changePassword') : 'Change Password' %></h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <form action="/account/changepassword?_method=put" method="post">
+            <div class="card-body">
+              <input type="hidden" name="matchPass" required value="<%= usr.matchPass || usr.password %>"/>
+              <input type="hidden" name="id" required value="<%= usr.id %>"/>
+              <div class="form-group">
+                <label for="oldPassword"><%= typeof t !== 'undefined' ? t('account.oldPassword') : 'Old Password' %></label>
+                <input type="password" name="oldPassword" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('account.oldPassword') : 'Old Password' %>" required />
+              </div>
+              <div class="form-group">
+                <label for="password"><%= typeof t !== 'undefined' ? t('account.newPassword') : 'New Password' %></label>
+                <input type="password" name="password" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('account.newPassword') : 'New Password' %>" required />
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword"><%= typeof t !== 'undefined' ? t('account.confirmPassword') : 'Confirm New Password' %></label>
+                <input type="password" name="confirmPassword" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('account.confirmPassword') : 'Confirm New Password' %>" required />
+              </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
+            </div>
+          </form>
+        </div>
+        <!-- /.card -->
+
+        <% if(typeof locals.user != 'undefined' && locals.user != 'superadmin@email.com') { %>
+        <!-- Change Role -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('account.changeRole') : 'Change Role' %></h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <form action="/account/changerole?_method=put" method="post">
+            <div class="card-body">
+              <input type="hidden" name="oldRole" required value="<%= usr.oldRole || usr.role %>"/>
+              <input type="hidden" name="role" required value="user"/>
+              <input type="hidden" name="matchPass" required value="<%= usr.matchPass || usr.password %>"/>
+              <input type="hidden" name="id" required value="<%= usr.id %>"/>
+              <div class="form-group">
+                <label for="oldEmail"><%= typeof t !== 'undefined' ? t('common.currentRole') : 'Current role' %> : </label>
+                <%= usr.oldRole || usr.role %>
+              </div>
+              <div class="form-group">
+                <label for="oldEmail"><%= typeof t !== 'undefined' ? t('common.changeRoleTo') : 'Change role to' %> : </label>
+                user
+              </div>
+              <div class="form-group">
+                <label for="password"><%= typeof t !== 'undefined' ? t('account.password') : 'Password' %></label>
+                <input type="password" name="password" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('account.password') : 'Password' %>" required />
+              </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
+            </div>
+          </form>
+        </div>
+        <!-- /.card -->
+        <% } %> 
+
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+<%- include('./partials/footer') %> 

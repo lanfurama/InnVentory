@@ -1,0 +1,246 @@
+<%- include('./partials/header') %> 
+<%- include('./partials/nav') %> 
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('stock.title') : 'Stock' %></h1>
+          </div>
+          <div class="col-sm-6">
+            <div id="bt" class="float-sm-right">
+              <div class="dt-buttons btn-group flex-wrap">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+                  <i class="fas fa-plus"></i>
+                  <%= typeof t !== 'undefined' ? t('stock.addItem') : 'Add Item' %>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <% if(typeof errors != 'undefined') { %>
+            <% errors.forEach(error => { %> 
+            <div class="alert alert-danger alert-dismissible">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <%= error.msg %> 
+            </div>
+            <% }) %> 
+            <% } %> 
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('stock.tableTitle') : 'Stock Table' %></h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="stokbarang" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th><%= typeof t !== 'undefined' ? t('stock.code') : 'Code' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('common.image') : 'Image' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('stock.name') : 'Name' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('stock.description') : 'Description' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('stock.stockQty') : 'Stock' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('stock.inputBy') : 'Entered by' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('common.action') : 'Action' %></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% brg.forEach((element, index)=> { %>
+                    <tr>
+                      <td><%= index+1%></td>
+                      <td><%= element.kodebarang %></td>
+                      <td><img src="/uploads/<%= element.image %>" class="zoomable"></td>
+                      <td><%= element.namabarang %></td>
+                      <td><%= element.deskripsi %></td>
+                      <td><%= element.stock %></td>
+                      <td><%= element.penginput %></td>
+                      <td>
+                        <a class="btn btn-info btn-sm" href="/barang/<%= element.idbarang %>" role="button"><i class="fas fa-eye"></i></a>
+                        <% if(typeof locals.user != 'undefined') { %> 
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit<%= element.idbarang %>">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete<%= element.idbarang %>">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <% } %> 
+                        <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#printqr<%= element.idbarang %>">
+                          <i class='fas fa-qrcode'></i>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="edit<%= element.idbarang %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('stock.editItem') : 'Edit Item' %></h4>
+                            <button type="button" class="close" onclick="$('#edit<%= element.idbarang %>').modal('hide');">&times;</button>
+                          </div>
+                          <!-- Modal body -->
+                          <form action="/barang/<%= element.idbarang %>?_method=put" method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                              <input type="hidden" name="oldKode" required value="<%= element.oldKode || element.kodebarang %>"/>
+                              <input type="hidden" name="oldNama" required value="<%= element.oldNama || element.namabarang %>"/>
+                              <input type="hidden" name="idbarang" required value="<%= element.idbarang %>"/>
+                              <input type="hidden" name="image" required value="<%= element.image %>"/>
+                              <div class="form-group">
+                                <label for="kodebarang"><%= typeof t !== 'undefined' ? t('stock.code') : 'Code' %></label>
+                                <input type="text" name="kodebarang" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('stock.code') : 'Code' %>" required value="<%= element.kodebarang %>" />
+                              </div>
+                              <div class="form-group">
+                                <label for="namabarang"><%= typeof t !== 'undefined' ? t('stock.name') : 'Name' %></label>
+                                <input type="text" name="namabarang" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('stock.name') : 'Name' %>" required value="<%= element.namabarang %>" />
+                              </div>
+                              <div class="form-group">
+                                <label for="deskripsi"><%= typeof t !== 'undefined' ? t('stock.description') : 'Description' %></label>
+                                <textarea name="deskripsi" class="form-control" rows="2" placeholder="<%= typeof t !== 'undefined' ? t('stock.description') : 'Description' %>" required><%= element.deskripsi %></textarea>
+                              </div>
+                              <div class="form-group">
+                                <label for="stock"><%= typeof t !== 'undefined' ? t('stock.stockQty') : 'Stock' %></label>
+                                <input type="number" name="stock" class="form-control" min="0" placeholder="<%= typeof t !== 'undefined' ? t('stock.stockQty') : 'Stock' %>" required value="<%= element.stock %>" />
+                              </div>
+                              <div class="form-group">
+                                <label for="image"><%= typeof t !== 'undefined' ? t('common.image') : 'Image' %></label>
+                                <input type="file" name="image" accept="image/png, image/jpeg" class="form-control-file" />
+                                <small class="form-text text-muted"><%= typeof t !== 'undefined' ? t('common.maxSize') : 'Max: 1MB' %></small>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary mb-2"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+                              <button type="button" class="btn btn-secondary" onclick="$('#edit<%= element.idbarang %>').modal('hide');"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="delete<%= element.idbarang %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('stock.deleteItem') : 'Delete Item' %></h4>
+                            <button type="button" class="close" onclick="$('#delete<%= element.idbarang %>').modal('hide');">&times;</button>
+                          </div>
+                          <!-- Modal body -->
+                          <form action="/barang/delete/<%= element.idbarang %>" method="post">
+                            <div class="modal-body">
+                              <%= typeof t !== 'undefined' ? t('stock.confirmDelete', { name: element.namabarang }) : 'Are you sure you want to delete ' + element.namabarang + '?' %>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.yes') : 'Yes' %></button>
+                              <button type="button" class="btn btn-secondary" onclick="$('#delete<%= element.idbarang %>').modal('hide');"><%= typeof t !== 'undefined' ? t('common.cancel') : 'Cancel' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Print QR Code Modal -->
+                    <div class="modal fade" id="printqr<%= element.idbarang %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('stock.printQR') : 'Print QR Code' %></h4>
+                            <button type="button" class="close" onclick="$('#printqr<%= element.idbarang %>').modal('hide');">&times;</button>
+                          </div>
+                          <!-- Modal body -->
+                          <div class="modal-body">
+                            <div class="d-flex justify-content-center">
+                              <b><%= element.kodebarang %> - <%= element.namabarang %></b>
+                            </div>
+                            <div class="d-flex justify-content-center mb-3">
+                              <img src="/uploads/<%= element.kodebarang %>.png">
+                            </div>
+                            <div class="form-group">
+                              <label for="qrSize"><%= typeof t !== 'undefined' ? t('stock.sizeLabel') : 'Size (width x height in cm)' %></label>
+                              <div class="input-group">
+                                <input id="qrWidth<%= element.idbarang %>" type="number" class="form-control" name="qrWidth" placeholder="<%= typeof t !== 'undefined' ? t('common.width') : 'Width (cm)' %>" step="0.01" value="2"  min="0.01" oninput="checkSizeValue(this)" />
+                                <div class="input-group-prepend input-group-append">
+                                  <span class="input-group-text">x</span>
+                                </div>
+                                <input id="qrHeight<%= element.idbarang %>" type="number" class="form-control" name="qrHeight" placeholder="<%= typeof t !== 'undefined' ? t('common.height') : 'Height (cm)' %>" step="0.01" value="2" min="0.01" oninput="checkSizeValue(this)" />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="qrQty"><%= typeof t !== 'undefined' ? t('common.quantity') : 'Quantity' %></label>
+                              <input id="qrQty<%= element.idbarang %>" type="number" class="form-control" name="qrQty" placeholder="<%= typeof t !== 'undefined' ? t('common.quantity') : 'Quantity' %>" value="1" min="1" oninput="checkQtyValue(this)" />
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="PrintImage('/uploads/<%= element.kodebarang %>.png','<%= element.idbarang %>', '<%= element.kodebarang %> - <%= element.namabarang %>'); return false;"><%= typeof t !== 'undefined' ? t('common.print') : 'Print' %></button>
+                            <button type="button" class="btn btn-secondary" onclick="$('#printqr<%= element.idbarang %>').modal('hide');"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+    <!-- Add Modal -->
+    <div class="modal fade" id="add">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('stock.addItem') : 'Add Item' %></h4>
+            <button type="button" class="close" onclick="$('#add').modal('hide');">&times;</button>
+          </div>
+          <!-- Modal body -->
+          <form action="/barang" method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="kodebarang"><%= typeof t !== 'undefined' ? t('stock.code') : 'Code' %></label>
+                <input type="text" name="kodebarang" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('stock.code') : 'Code' %>" required />
+              </div>
+              <div class="form-group">
+                <label for="namabarang"><%= typeof t !== 'undefined' ? t('stock.name') : 'Name' %></label>
+                <input type="text" name="namabarang" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('stock.name') : 'Name' %>" required />
+              </div>
+              <div class="form-group">
+                <label for="deskripsi"><%= typeof t !== 'undefined' ? t('stock.description') : 'Description' %></label>
+                <textarea name="deskripsi" class="form-control" rows="2" placeholder="<%= typeof t !== 'undefined' ? t('stock.description') : 'Description' %>" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="stock"><%= typeof t !== 'undefined' ? t('stock.stockQty') : 'Stock' %></label>
+                <input type="number" name="stock" class="form-control" min="1" placeholder="<%= typeof t !== 'undefined' ? t('stock.stockQty') : 'Stock' %>" required />
+              </div>
+              <div class="form-group">
+                <label for="image"><%= typeof t !== 'undefined' ? t('common.image') : 'Image' %></label>
+                <input type="file" name="image" accept="image/png, image/jpeg" class="form-control-file" required />
+                <small class="form-text text-muted"><%= typeof t !== 'undefined' ? t('common.maxSize') : 'Max: 1MB' %></small>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+              <button type="button" class="btn btn-secondary" onclick="$('#add').modal('hide');"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<%- include('./partials/footer') %> 

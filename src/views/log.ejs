@@ -1,0 +1,80 @@
+<%- include('./partials/header') %> 
+<%- include('./partials/nav') %> 
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('log.title') : 'App Log' %></h1>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('log.tableTitle') : 'App Log Table' %></h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="log" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th><%= typeof t !== 'undefined' ? t('log.dateTime') : 'Date & Time' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('log.user') : 'User' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('log.method') : 'Method' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('log.endpoint') : 'Endpoint' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('log.statusCode') : 'Status Code' %></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% log.forEach((element, index)=> { %>
+                    <tr>
+                      <td><%= index+1%></td>
+                      <td><%= moment(element.date).locale('id').format('DD-MM-YYYY HH:mm:ss') %></td>
+                      <td><%= element.usr %></td>
+                      <td><%= element.method %></td>
+                      <td><%= element.endpoint %></td>
+                      <td><%= element.status_code %></td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+    <!-- Clear Log Modal-->
+    <div class="modal fade" id="clearLog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header-->
+          <div class="modal-header">
+            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('log.clearLog') : 'Clear Log' %></h4>
+            <button type="button" class="close" onclick="$('#clearLog').modal('hide');">&times;</button>
+          </div>
+          <!-- Modal body-->
+          <form action="/log/delete/" method="post">
+            <div class="modal-body">
+              <%= typeof t !== 'undefined' ? t('log.confirmClear') : 'Are you sure you want to delete all saved log data?' %>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.yes') : 'Yes' %></button>
+              <button type="button" class="btn btn-secondary" onclick="$('#clearLog').modal('hide');"><%= typeof t !== 'undefined' ? t('common.cancel') : 'Cancel' %></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<%- include('./partials/footer') %> 

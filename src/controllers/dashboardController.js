@@ -1,13 +1,13 @@
 const user = require('../queries/usersQuery');
-const stok = require('../queries/stockBarangQuery');
-const bmasuk = require('../queries/barangMasukQuery');
-const bkeluar = require('../queries/barangKeluarQuery');
+const stockQuery = require('../queries/stockQuery');
+const stockInQuery = require('../queries/stockInQuery');
+const stockOutQuery = require('../queries/stockOutQuery');
 
 const getIndex = async (req, res) => {
   if (req.session.user && req.session.user.role === 'superadmin') {
-    const totalStock = await stok.totalStock();
-    const totalQtyBM = await bmasuk.totalQty();
-    const totalQtyBK = await bkeluar.totalQty();
+    const totalStock = await stockQuery.getTotalStockQty();
+    const totalQtyBM = await stockInQuery.getTotalStockInQty();
+    const totalQtyBK = await stockOutQuery.getTotalStockOutQty();
     const totalUsers = await user.totalUsers();
     res.render('index', {
       user: req.session.user.email,
@@ -18,9 +18,9 @@ const getIndex = async (req, res) => {
       totalUsers,
     });
   } else if (req.session.user && req.session.user.role === 'user') {
-    const totalStock = await stok.totalStock();
-    const totalQtyBM = await bmasuk.totalQty();
-    const totalQtyBK = await bkeluar.totalQty();
+    const totalStock = await stockQuery.getTotalStockQty();
+    const totalQtyBM = await stockInQuery.getTotalStockInQty();
+    const totalQtyBK = await stockOutQuery.getTotalStockOutQty();
     const totalUsers = await user.totalUsers();
     res.render('index', {
       us: req.session.user.email,

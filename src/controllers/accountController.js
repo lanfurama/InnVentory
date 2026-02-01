@@ -3,24 +3,8 @@ const { body, validationResult } = require('express-validator');
 const user = require('../queries/usersQuery');
 
 const getAccount = async (req, res) => {
-  if (req.session.user && req.session.user.role === 'superadmin') {
-    const users = await user.checkProfile(req.session.user.email);
-    res.render('account', {
-      usr: users,
-      user: req.session.user.email,
-      title: req.t('account.title'),
-    });
-  } else if (req.session.user && req.session.user.role === 'user') {
-    const users = await user.checkProfile(req.session.user.email);
-    res.render('account', {
-      usr: users,
-      us: req.session.user.email,
-      title: req.t('account.title'),
-    });
-  } else {
-    res.status(401);
-    res.render('401', { title: req.t('errors.401') });
-  }
+  const users = await user.checkProfile(req.session.user.email);
+  res.render('account', { usr: users, title: req.t('account.title') });
 };
 
 const changeEmail = [
@@ -42,27 +26,24 @@ const changeEmail = [
     return true;
   }),
   async (req, res) => {
-    if (req.session.user && req.session.user.email !== 'superadmin@email.com') {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.render('account', {
-          title: req.t('account.title'),
-          errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
-          usr: req.body,
-          user: req.session.user.email,
-        });
-      } else {
-        await user.updateEmail(req.body);
-        req.session = null;
-        res.render('login', {
-title: req.t('login.title'),
-          logout: req.t('account.changeEmailSuccess'),
-        });
-      }
-    } else {
+    if (req.session.user.email === 'superadmin@email.com') {
       res.status(401);
-      res.render('401', { title: req.t('errors.401') });
+      return res.render('401', { title: req.t('errors.401') });
     }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render('account', {
+        title: req.t('account.title'),
+        errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
+        usr: req.body,
+      });
+    }
+    await user.updateEmail(req.body);
+    req.session = null;
+    res.render('login', {
+      title: req.t('login.title'),
+      logout: req.t('account.changeEmailSuccess'),
+    });
   },
 ];
 
@@ -88,50 +69,22 @@ const changePassword = [
     return true;
   }),
   async (req, res) => {
-    if (req.session.user && req.session.user.role === 'superadmin') {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.render('account', {
-          title: req.t('account.title'),
-          errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
-          usr: req.body,
-          user: req.session.user.email,
-        });
-      } else {
-        const password = await bcrypt.hash(req.body.password, 10);
-        const { id } = req.body;
-
-        await user.updatePassword(password, id);
-        req.session = null;
-        res.render('login', {
-          title: req.t('login.title'),
-          logout: req.t('account.changePasswordSuccess'),
-        });
-      }
-    } else if (req.session.user && req.session.user.role === 'user') {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.render('account', {
-          title: req.t('account.title'),
-          errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
-          usr: req.body,
-          us: req.session.user.email,
-        });
-      } else {
-        const password = await bcrypt.hash(req.body.password, 10);
-        const { id } = req.body;
-
-        await user.updatePassword(password, id);
-        req.session = null;
-        res.render('login', {
-          title: req.t('login.title'),
-          logout: req.t('account.changePasswordSuccess'),
-        });
-      }
-    } else {
-      res.status(401);
-      res.render('401', { title: req.t('errors.401') });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render('account', {
+        title: req.t('account.title'),
+        errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
+        usr: req.body,
+      });
     }
+    const password = await bcrypt.hash(req.body.password, 10);
+    const { id } = req.body;
+    await user.updatePassword(password, id);
+    req.session = null;
+    res.render('login', {
+      title: req.t('login.title'),
+      logout: req.t('account.changePasswordSuccess'),
+    });
   },
 ];
 
@@ -144,27 +97,24 @@ const changeRole = [
     return true;
   }),
   async (req, res) => {
-    if (req.session.user && req.session.user.email !== 'superadmin@email.com') {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.render('account', {
-          title: req.t('account.title'),
-          errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
-          usr: req.body,
-          user: req.session.user.email,
-        });
-      } else {
-        await user.updateRole(req.body);
-        req.session = null;
-        res.render('login', {
-          title: req.t('login.title'),
-          logout: req.t('account.changeRoleSuccess'),
-        });
-      }
-    } else {
+    if (req.session.user.email === 'superadmin@email.com') {
       res.status(401);
-      res.render('401', { title: req.t('errors.401') });
+      return res.render('401', { title: req.t('errors.401') });
     }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render('account', {
+        title: req.t('account.title'),
+        errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) })),
+        usr: req.body,
+      });
+    }
+    await user.updateRole(req.body);
+    req.session = null;
+    res.render('login', {
+      title: req.t('login.title'),
+      logout: req.t('account.changeRoleSuccess'),
+    });
   },
 ];
 

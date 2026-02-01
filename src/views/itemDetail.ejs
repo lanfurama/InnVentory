@@ -1,40 +1,37 @@
-<%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
           <div class="col-sm-6">
             <h1><%= typeof t !== 'undefined' ? t('itemDetail.title') : 'Item Detail' %></h1>
           </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
-    <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <div class="card">
           <div class="card-header">
-              <h2><%= brg.namabarang %></h2>
-              <img src="/uploads/<%= brg.image %>" class="img-detail">
-              <img src="/uploads/<%= brg.kodebarang %>.png" class="img-detail">
+              <h2><%= item.namabarang %></h2>
+              <img src="/uploads/<%= item.image %>" class="img-detail">
+              <img src="/uploads/<%= item.kodebarang %>.png" class="img-detail">
           </div>
           <div class="card-body">
             <div class="row">
               <div class="col-md-3"><%= typeof t !== 'undefined' ? t('itemDetail.code') : 'Code' %></div>
-              <div class="col-md-9">: <%= brg.kodebarang %></div>
+              <div class="col-md-9">: <%= item.kodebarang %></div>
             </div>
             <div class="row">
               <div class="col-md-3"><%= typeof t !== 'undefined' ? t('itemDetail.description') : 'Description' %></div>
-              <div class="col-md-9">: <%= brg.deskripsi %></div>
+              <div class="col-md-9">: <%= item.deskripsi %></div>
             </div>
             <div class="row">
               <div class="col-md-3"><%= typeof t !== 'undefined' ? t('itemDetail.stock') : 'Stock' %></div>
-              <div class="col-md-9">: <%= brg.stock %></div>
+              <div class="col-md-9">: <%= item.stock %></div>
             </div>
             <div class="row">
               <div class="col-md-3"><%= typeof t !== 'undefined' ? t('itemDetail.inputBy') : 'Entered by' %></div>
-              <div class="col-md-9">: <%= brg.penginput %></div>
+              <div class="col-md-9">: <%= item.penginput %></div>
             </div>
-
             <br><br><br>
-
             <h3><%= typeof t !== 'undefined' ? t('itemDetail.stockIn') : 'Stock In' %></h3>
             <table id="detailbarangmasuk" class="table table-bordered table-striped">
               <thead>
@@ -49,7 +46,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% brgm.forEach((element, index)=> { %>
+                <% (stockInList || []).forEach((element, index)=> { %>
                 <tr>
                   <td><%= index+1%></td>
                   <td><%= moment(element.tanggal).locale('id').format('DD-MM-YYYY HH:mm:ss') %></td>
@@ -62,9 +59,7 @@
                 <% }) %>
               </tbody>
             </table>
-
             <br><br>
-
             <h3><%= typeof t !== 'undefined' ? t('itemDetail.stockOut') : 'Stock Out' %></h3>
             <table id="detailbarangkeluar" class="table table-bordered table-striped">
               <thead>
@@ -79,7 +74,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% brgk.forEach((element, index)=> { %>
+                <% (stockOutList || []).forEach((element, index)=> { %>
                 <tr>
                   <td><%= index+1%></td>
                   <td><%= moment(element.tanggal).locale('id').format('DD-MM-YYYY HH:mm:ss') %></td>
@@ -95,6 +90,5 @@
           </div>
         </div>
       </div>
-      <!-- /.container-fluid -->
     </section>
-<%- include('./partials/footer') %> 
+<%- include('./partials/footer') %>

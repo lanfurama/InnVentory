@@ -1,10 +1,12 @@
 const express = require('express');
-
 const router = express.Router();
+const { requireAuth, requireRole } = require('../middleware/auth');
 const {
   getUsers, addUser, updateUser, deleteUser, resetPassword,
 } = require('../controllers/usersController');
 
+router.use(requireAuth);
+router.use(requireRole('superadmin'));
 router.get('/users', getUsers);
 router.post('/users', addUser);
 router.put('/users/:id', updateUser);

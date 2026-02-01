@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
@@ -14,9 +15,9 @@ const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const accountRoutes = require('./routes/accountRoutes');
-const barangRoutes = require('./routes/barangRoutes');
-const barangMasukRoutes = require('./routes/barangMasukRoutes');
-const barangKeluarRoutes = require('./routes/barangKeluarRoutes');
+const stockRoutes = require('./routes/stockRoutes');
+const stockInRoutes = require('./routes/stockInRoutes');
+const stockOutRoutes = require('./routes/stockOutRoutes');
 const logRoutes = require('./routes/logRoutes');
 
 const app = express();
@@ -33,10 +34,13 @@ app.use((req, res, next) => {
   res.locals.lang = req.language || 'en';
   next();
 });
+const sessionKeys = process.env.SESSION_KEYS
+  ? process.env.SESSION_KEYS.split(',').map((k) => k.trim()).filter(Boolean)
+  : [crypto.randomBytes(16).toString('hex')];
 app.use(
   cookieSession({
     name: 'session',
-    keys: [crypto.randomBytes(16).toString('hex')],
+    keys: sessionKeys.length ? sessionKeys : [crypto.randomBytes(16).toString('hex')],
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   }),
 );
@@ -106,9 +110,9 @@ app.use(authRoutes);
 app.use(dashboardRoutes);
 app.use(usersRoutes);
 app.use(accountRoutes);
-app.use(barangRoutes);
-app.use(barangMasukRoutes);
-app.use(barangKeluarRoutes);
+app.use(stockRoutes);
+app.use(stockInRoutes);
+app.use(stockOutRoutes);
 app.use(logRoutes);
 
 app.get('/lang/:lng', (req, res) => {
@@ -121,6 +125,19 @@ app.get('/lang/:lng', (req, res) => {
 
 app.get('*', (req, res) => {
   res.status(404).render('404', { title: req.t ? req.t('errors.404') : '404 Error' });
+});
+
+// Error handler: catches errors passed to next(err) and async rejections (express-async-errors)
+app.use((err, req, res, next) => {
+  console.error(err);
+  const status = err.status || err.statusCode || 500;
+  res.status(status);
+  const title = req.t ? req.t('errors.500') : 'Error 500 - Server Error';
+  if (req.headers.accept && req.headers.accept.includes('application/json')) {
+    res.json({ error: title, message: err.message });
+    return;
+  }
+  res.render('500', { title, message: err.message });
 });
 
 module.exports = app;

@@ -104,7 +104,9 @@
     "inputBy": "Entered by",
     "confirmDelete": "Are you sure you want to delete stock in {{name}} on {{date}}?",
     "item": "Item",
-    "selectItem": "Select Item"
+    "selectItem": "Select Item",
+    "editFailNegativeStock": "Edit failed: reducing this quantity would make stock negative.",
+    "deleteFailNegativeStock": "Delete failed: removing this entry would make stock negative."
   },
   "stockOut": {
     "title": "Stock Out",
@@ -119,7 +121,9 @@
     "recipient": "Recipient",
     "inputBy": "Entered by",
     "confirmDelete": "Are you sure you want to delete stock out {{name}} on {{date}}?",
-    "selectItem": "Select Item"
+    "selectItem": "Select Item",
+    "addFailInsufficientStock": "Add failed: insufficient stock.",
+    "editFailNegativeStock": "Edit failed: increasing this quantity would make stock negative."
   },
   "itemDetail": {
     "title": "Item Detail",
@@ -166,6 +170,7 @@
   "errors": {
     "401": "Error 401 - Unauthorized",
     "404": "Error 404 - Page Not Found",
+    "500": "Error 500 - Server Error",
     "goHome": "Go to Dashboard"
   },
   "footer": {

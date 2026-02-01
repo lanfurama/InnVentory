@@ -40,7 +40,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
-      <img src="/images/logo.png" alt="WGS Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <img src="/images/logo.svg" alt="InnVentory Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light"><b><%= typeof t !== 'undefined' ? t('nav.appName') : 'InnVentory' %></b></span>
     </a>
 
@@ -83,9 +83,9 @@
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <% if(locals.title == stockTitle) { %>
-                <a href="/barang" class="nav-link active">
+                <a href="/stock" class="nav-link active">
                 <% } else { %>
-                <a href="/barang" class="nav-link">
+                <a href="/stock" class="nav-link">
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
                   <p><%= typeof t !== 'undefined' ? t('nav.stock') : 'Stock' %></p>
@@ -93,9 +93,9 @@
               </li>
               <li class="nav-item">
                 <% if(locals.title == stockInTitle) { %>
-                <a href="/barangmasuk" class="nav-link active">
+                <a href="/stock-in" class="nav-link active">
                 <% } else { %>
-                <a href="/barangmasuk" class="nav-link">
+                <a href="/stock-in" class="nav-link">
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
                   <p><%= typeof t !== 'undefined' ? t('nav.stockIn') : 'Stock In' %></p>
@@ -103,9 +103,9 @@
               </li>
               <li class="nav-item">
                 <% if(locals.title == stockOutTitle) { %>
-                <a href="/barangkeluar" class="nav-link active">
+                <a href="/stock-out" class="nav-link active">
                 <% } else { %>
-                <a href="/barangkeluar" class="nav-link">
+                <a href="/stock-out" class="nav-link">
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
                   <p><%= typeof t !== 'undefined' ? t('nav.stockOut') : 'Stock Out' %></p>

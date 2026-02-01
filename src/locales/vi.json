@@ -87,7 +87,9 @@
     "inputBy": "Người nhập",
     "confirmDelete": "Bạn có chắc muốn xóa phiếu nhập {{name}} ngày {{date}}?",
     "item": "Hàng hóa",
-    "selectItem": "Chọn hàng"
+    "selectItem": "Chọn hàng",
+    "editFailNegativeStock": "Sửa thất bại: giảm số lượng sẽ khiến tồn kho âm.",
+    "deleteFailNegativeStock": "Xóa thất bại: xóa phiếu này sẽ khiến tồn kho âm."
   },
   "stockOut": {
     "title": "Xuất kho",
@@ -102,7 +104,9 @@
     "recipient": "Người nhận",
     "inputBy": "Người nhập",
     "confirmDelete": "Bạn có chắc muốn xóa phiếu xuất {{name}} ngày {{date}}?",
-    "selectItem": "Chọn hàng"
+    "selectItem": "Chọn hàng",
+    "addFailInsufficientStock": "Thêm thất bại: tồn kho không đủ.",
+    "editFailNegativeStock": "Sửa thất bại: tăng số lượng sẽ khiến tồn kho âm."
   },
   "itemDetail": {
     "title": "Chi tiết hàng",
@@ -166,6 +170,7 @@
   "errors": {
     "401": "Lỗi 401 - Không được phép",
     "404": "Lỗi 404 - Không tìm thấy trang",
+    "500": "Lỗi 500 - Lỗi máy chủ",
     "goHome": "Về Dashboard"
   },
   "footer": {

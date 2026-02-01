@@ -50,7 +50,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <% brgm.forEach((element, index)=> { %>
+                    <% stockInList.forEach((element, index)=> { %>
                     <tr>
                       <td><%= index+1%></td>
                       <td><%= moment(element.tanggal).locale('id').format('DD-MM-YYYY HH:mm:ss') %></td>
@@ -81,7 +81,7 @@
                             <button type="button" class="close" onclick="$('#edit<%= element.idmasuk %>').modal('hide');">&times;</button>
                           </div>
                           <!-- Modal body -->
-                          <form action="/barangmasuk/<%= element.idmasuk %>?_method=put" method="post">
+                          <form action="/stock-in/<%= element.idmasuk %>?_method=put" method="post">
                             <div class="modal-body">
                               <input type="hidden" name="idmasuk" required value="<%= element.idmasuk %>"/>
                               <input type="hidden" name="idbarang" required value="<%= element.idbarang %>"/>
@@ -113,7 +113,7 @@
                             <button type="button" class="close" onclick="$('#delete<%= element.idmasuk %>').modal('hide');">&times;</button>
                           </div>
                           <!-- Modal body-->
-                          <form action="/barangmasuk/delete/<%= element.idmasuk %>" method="post">
+                          <form action="/stock-in/delete/<%= element.idmasuk %>" method="post">
                             <div class="modal-body">
                               <%= typeof t !== 'undefined' ? t('stockIn.confirmDelete', { name: element.namabarang_m, date: moment(element.tanggal).locale('id').format('DD-MM-YYYY [jam] HH:mm:ss') }) : 'Are you sure you want to delete stock in ' + element.namabarang_m + ' on ' + moment(element.tanggal).locale('id').format('DD-MM-YYYY [jam] HH:mm:ss') + '?' %>
                               <input type="hidden" name="idmasuk" required value="<%= element.idmasuk %>">
@@ -154,7 +154,7 @@
             <button type="button" class="close" onclick="$('#add').modal('hide');stopScan();">&times;</button>
           </div>
           <!-- Modal body -->
-          <form action="/barangmasuk" method="post">
+          <form action="/stock-in" method="post">
             <div class="modal-body">
               <div class="form-group">
                 <div id="reader"></div>
@@ -163,7 +163,7 @@
                 <label for="barang"><%= typeof t !== 'undefined' ? t('stockIn.item') : 'Item' %></label>
                 <select class="form-control select2bs4" id="barang" name="barang" required>
                   <option value="" disabled selected><%= typeof t !== 'undefined' ? t('stockIn.selectItem') : 'Select Item' %></option>
-                  <% brg.forEach((element)=> { %>
+                  <% items.forEach((element)=> { %>
                   <option value="<%= element.idbarang %>"><%= element.kodebarang %> - <%= element.namabarang %></option>
                   <% }) %> 
                 </select>

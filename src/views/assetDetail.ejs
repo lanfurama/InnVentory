@@ -7,7 +7,10 @@
           </ol>
         </nav>
         <div class="page-header-flex">
-          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('assetDetail.assetHistory') : 'Asset History' %></h1>
+          <div class="page-header-text">
+            <h1 class="page-title"><%= typeof t !== 'undefined' ? t('assetDetail.assetHistory') : 'Asset History' %></h1>
+            <p class="page-subtitle text-muted mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.assetHistorySub') : 'Audit trail for lifecycle events and financial adjustments.' %></p>
+          </div>
           <div class="page-header-actions">
             <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>"><i class="fas fa-bell"></i></a>
             <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
@@ -18,8 +21,6 @@
     </section>
     <section class="content">
       <div class="container-fluid">
-        <p class="text-muted mb-4" style="font-size: 0.9rem;"><%= typeof t !== 'undefined' ? t('assetDetail.assetHistorySub') : 'Audit trail for lifecycle events and financial adjustments.' %></p>
-
         <div class="row">
           <!-- Left: Asset card + Attachments -->
           <div class="col-lg-4">
@@ -37,8 +38,8 @@
                 </span>
               </div>
               <div class="card-body">
-                <h2 class="h5 card-title mb-2"><%= asset.name %></h2>
-                <p class="card-text text-muted small mb-3"><%= asset.notes || (asset.category_name || '') %></p>
+                <h2 class="h5 card-title mb-1"><%= asset.name %></h2>
+                <p class="card-text text-muted small mb-2"><%= asset.notes || (asset.category_name || '') %></p>
                 <dl class="asset-detail-dl mb-0">
                   <div class="d-flex justify-content-between py-2 border-bottom border-light">
                     <dt class="text-muted small mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.tagId') : 'TAG ID' %></dt>
@@ -58,7 +59,7 @@
                   </div>
                 </dl>
                 <% if(typeof locals.user != 'undefined') { %>
-                <a href="/assets" class="btn btn-primary btn-primary-rounded btn-sm mt-3 w-100"><i class="fas fa-pencil-alt mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.editDetails') : 'Edit Details' %></a>
+                <a href="/assets" class="btn btn-primary btn-primary-rounded btn-sm mt-2 w-100"><i class="fas fa-pencil-alt mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.editDetails') : 'Edit Details' %></a>
                 <% } %>
               </div>
             </div>

@@ -1,13 +1,12 @@
-<%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('account.title') : 'Edit Account' %></h1>
-          </div>
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+        <h1 class="page-title mb-0"><%= typeof t !== 'undefined' ? t('account.title') : 'Edit Account' %></h1>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
     <!-- Main content -->
-    <section class="content">
+    <section class="content account-page">
       <div class="container-fluid">
         <% if(typeof errors != 'undefined') { %>
         <% errors.forEach(error => { %> 
@@ -16,10 +15,12 @@
           <%= error.msg %> 
         </div>
         <% }) %> 
-        <% } %> 
+        <% } %>
+        <div class="row">
+          <div class="col-lg-8 col-xl-6">
         <% if(typeof locals.user != 'undefined' && locals.user != 'superadmin@email.com') { %>
         <!-- Change Email -->
-        <div class="card card-default">
+        <div class="card account-card mb-3">
           <div class="card-header">
             <h3 class="card-title"><%= typeof t !== 'undefined' ? t('account.changeEmail') : 'Change Email' %></h3>
           </div>
@@ -46,15 +47,14 @@
             <!-- /.card-body -->
 
             <div class="card-footer">
-              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
+              <button type="submit" class="btn btn-primary btn-primary-rounded"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
             </div>
           </form>
         </div>
-        <!-- /.card -->
-        <% } %> 
-        
+        <% } %>
+
         <!-- Change Password -->
-        <div class="card card-default">
+        <div class="card account-card mb-3">
           <div class="card-header">
             <h3 class="card-title"><%= typeof t !== 'undefined' ? t('account.changePassword') : 'Change Password' %></h3>
           </div>
@@ -80,15 +80,14 @@
             <!-- /.card-body -->
 
             <div class="card-footer">
-              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
+              <button type="submit" class="btn btn-primary btn-primary-rounded"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
             </div>
           </form>
         </div>
-        <!-- /.card -->
 
         <% if(typeof locals.user != 'undefined' && locals.user != 'superadmin@email.com') { %>
         <!-- Change Role -->
-        <div class="card card-default">
+        <div class="card account-card mb-3">
           <div class="card-header">
             <h3 class="card-title"><%= typeof t !== 'undefined' ? t('account.changeRole') : 'Change Role' %></h3>
           </div>
@@ -116,13 +115,14 @@
             <!-- /.card-body -->
 
             <div class="card-footer">
-              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
+              <button type="submit" class="btn btn-primary btn-primary-rounded"><%= typeof t !== 'undefined' ? t('common.submit') : 'Submit' %></button>
             </div>
           </form>
         </div>
-        <!-- /.card -->
-        <% } %> 
+        <% } %>
 
+          </div>
+        </div>
       </div>
       <!-- /.container-fluid -->
     </section>

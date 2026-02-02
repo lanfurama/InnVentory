@@ -60,7 +60,7 @@
 
 .login-page .card-body,
 .login-page .login-card-body {
-  padding: 16px 20px;
+  padding: 14px 16px;
 }
 
 .login-page .login-box-msg {
@@ -73,10 +73,10 @@
 .login-page .form-control {
   border-radius: 0;
   border: 1px solid #d0d0d0;
-  padding: 8px 10px;
+  padding: 6px 10px;
   font-size: 0.9375rem;
   height: auto;
-  min-height: 38px;
+  min-height: 36px;
 }
 
 .login-page .form-control:focus {
@@ -94,7 +94,7 @@
   border: 1px solid #d0d0d0;
   border-left: 0;
   background: #fafafa;
-  padding: 8px 10px;
+  padding: 6px 10px;
   min-width: 40px;
   justify-content: center;
 }
@@ -115,7 +115,7 @@
 
 .login-page .btn-primary {
   border-radius: 0;
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-size: 0.9375rem;
   font-weight: 600;
   margin-top: 4px;
@@ -129,8 +129,8 @@
 
 .login-page .alert {
   border-radius: 0;
-  padding: 8px 12px;
-  margin-bottom: 10px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
   font-size: 0.875rem;
 }
 
@@ -158,7 +158,7 @@
 
   .login-page .card-body,
   .login-page .login-card-body {
-    padding: 14px 16px;
+    padding: 12px 14px;
   }
 
   .login-page .login-logo a {

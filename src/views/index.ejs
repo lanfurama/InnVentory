@@ -83,7 +83,7 @@
                 <h3 class="chart-title"><%= typeof t !== 'undefined' ? t('dashboard.projectedDepreciation') : 'Projected Depreciation' %></h3>
                 <div class="chart-subtitle">Fiscal Year <%= new Date().getFullYear() %></div>
               </div>
-              <span class="chart-legend-dot" style="background:#3498db"></span> <span><%= typeof t !== 'undefined' ? t('dashboard.projectedValue') : 'Projected Value' %></span>
+              <span class="chart-legend-dot" style="background:#1976d2"></span> <span><%= typeof t !== 'undefined' ? t('dashboard.projectedValue') : 'Projected Value' %></span>
             </div>
             <div id="depreciationTrendsChart" style="min-height: 280px;"></div>
           </div>
@@ -109,7 +109,7 @@
               <div id="assetDistributionChart" style="min-height: 220px;"></div>
               <% if (typeof byCategory !== 'undefined' && byCategory.length) { %>
               <ul class="top-categories-list mt-2">
-                <% byCategory.slice(0, 5).forEach(function(cat, i) { const colors = ['#3498db', '#9b59b6', '#1abc9c', '#e74c3c', '#f39c12']; %>
+                <% byCategory.slice(0, 5).forEach(function(cat, i) { const colors = ['#1976d2', '#9b59b6', '#1abc9c', '#e74c3c', '#f39c12']; %>
                 <li><span class="d-flex align-items-center"><span class="top-categories-dot" style="background:<%= colors[i % 5] %>"></span><span class="top-categories-name"><%= cat.name %></span></span><span class="top-categories-count"><%= cat.count %></span></li>
                 <% }); %>
               </ul>

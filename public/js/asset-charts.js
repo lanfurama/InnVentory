@@ -12,7 +12,7 @@
       series: seriesData,
       chart: { type: 'donut', height: 200 },
       labels: labels,
-      colors: ['#3498db', '#27ae60', '#f39c12'],
+      colors: ['#1976d2', '#27ae60', '#f39c12'],
       legend: { position: 'bottom' },
       plotOptions: {
         pie: {

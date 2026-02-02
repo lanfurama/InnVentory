@@ -22,7 +22,7 @@
         verticalAlign: 'middle'
       },
       stroke: { curve: 'smooth', width: 2 },
-      colors: ['#3498db'],
+      colors: ['#1976d2'],
       fill: {
         type: 'gradient',
         gradient: {
@@ -78,7 +78,7 @@
         verticalAlign: 'middle'
       },
       labels: labels,
-      colors: ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'],
+      colors: ['#1976d2', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'],
       legend: {
         position: 'bottom',
         fontSize: '14px'

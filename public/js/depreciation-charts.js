@@ -20,7 +20,7 @@
         toolbar: { show: false }
       },
       stroke: { curve: 'smooth', width: 2 },
-      colors: ['#3498db', '#95a5a6'],
+      colors: ['#1976d2', '#95a5a6'],
       xaxis: {
         categories: years,
         labels: { style: { fontSize: '12px' } }

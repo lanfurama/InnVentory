@@ -15,6 +15,7 @@
             <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm"><i class="fas fa-sort mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.sort') : 'Sort' %></button>
             <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm" id="assetsExportBtn"><i class="fas fa-download mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.export') : 'Export' %></button>
             <% if(typeof locals.user != 'undefined') { %>
+            <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm" data-toggle="modal" data-target="#importExcel"><i class="fas fa-file-excel mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.import') : 'Import Excel' %></button>
             <button type="button" class="btn btn-primary btn-primary-rounded btn-sm" data-toggle="modal" data-target="#add"><i class="fas fa-plus mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.addNewAsset') : 'Add New Asset' %></button>
             <% } %>
             <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>"><i class="fas fa-bell"></i></a>
@@ -34,6 +35,18 @@
           <%= error.msg %>
         </div>
         <% }) %>
+        <% } %>
+        <% if(typeof importSuccess != 'undefined' && importSuccess) { %>
+        <div class="alert alert-success alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= importSuccess %>
+        </div>
+        <% } %>
+        <% if(typeof importError != 'undefined' && importError) { %>
+        <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= importError %>
+        </div>
         <% } %>
 
         <!-- Summary Cards -->
@@ -81,6 +94,7 @@
                       <th>ASSET ID</th>
                       <th>ASSET NAME</th>
                       <th><%= typeof t !== 'undefined' ? t('asset.category') : 'CATEGORY' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('asset.department') : 'DEPARTMENT' %></th>
                       <th><%= typeof t !== 'undefined' ? t('asset.location') : 'LOCATION' %></th>
                       <th><%= typeof t !== 'undefined' ? t('asset.assignee') : 'ASSIGNEE' %></th>
                       <th><%= typeof t !== 'undefined' ? t('asset.status') : 'STATUS' %></th>
@@ -102,7 +116,8 @@
                         </div>
                       </td>
                       <td><%= element.category_name || '-' %></td>
-                      <td><%= element.location || element.department_name || '-' %></td>
+                      <td><%= element.department_name || '-' %></td>
+                      <td><%= element.location || '-' %></td>
                       <td>
                         <% if(element.custodian) { %>
                         <span class="avatar-circle avatar-circle-sm mr-1"><%= (element.custodian || 'U').toString().charAt(0).toUpperCase() %></span>
@@ -399,6 +414,36 @@
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Import Excel Modal -->
+    <% if(typeof locals.user != 'undefined') { %>
+    <div class="modal fade" id="importExcel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('asset.importExcel') : 'Import Excel' %></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <form action="/assets/import" method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+              <p class="text-muted small"><%= typeof t !== 'undefined' ? t('asset.importFileHint') : 'Upload file .xlsx or .xls. Row 1 = headers. Required: asset_code, name. Category and department by code.' %></p>
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('asset.importFile') : 'Excel file' %></label>
+                <input type="file" name="excel" class="form-control-file" accept=".xlsx,.xls" required />
+              </div>
+              <p class="mb-0">
+                <a href="/assets/import/template" class="btn btn-sm btn-outline-secondary"><i class="fas fa-download mr-1"></i><%= typeof t !== 'undefined' ? t('asset.downloadTemplate') : 'Download template' %></a>
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('asset.import') : 'Import' %></button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
             </div>
           </form>

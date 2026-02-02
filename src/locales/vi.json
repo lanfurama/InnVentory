@@ -128,7 +128,16 @@
     "totalAssets": "Tổng tài sản",
     "currentlyInUse": "Đang sử dụng",
     "underRepair": "Đang sửa chữa",
-    "searchPlaceholder": "Tìm theo tài sản, mã hoặc người dùng..."
+    "searchPlaceholder": "Tìm theo tài sản, mã hoặc người dùng...",
+    "import": "Import Excel",
+    "importExcel": "Import từ file Excel",
+    "importFile": "Chọn file Excel",
+    "importFileHint": "Tải lên file .xlsx hoặc .xls. Dòng đầu là tiêu đề cột. Bắt buộc: asset_code, name. Danh mục và phòng ban nhập theo mã.",
+    "downloadTemplate": "Tải file mẫu",
+    "importFileRequired": "Vui lòng chọn file Excel.",
+    "importInvalidFile": "File không hợp lệ hoặc không đọc được.",
+    "importNoRows": "File không có dòng dữ liệu.",
+    "importSuccessCount": "Đã import thành công {{count}} tài sản."
   },
   "assetDetail": {
     "title": "Chi tiết tài sản",

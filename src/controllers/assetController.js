@@ -6,6 +6,7 @@ const QRCode = require('qrcode');
 const multer = require('multer');
 const path = require('path');
 
+const XLSX = require('xlsx');
 const assetQuery = require('../queries/assetQuery');
 const assetCategoryQuery = require('../queries/assetCategoryQuery');
 const departmentQuery = require('../queries/departmentQuery');
@@ -30,6 +31,10 @@ const getAssets = async (req, res) => {
   const totalAssets = assets.length;
   const inUseCount = assets.filter((a) => a.status === 'active').length;
   const underRepairCount = assets.filter((a) => a.status === 'maintenance').length;
+  const importSuccess = req.session.importSuccess || null;
+  const importError = req.session.importError || null;
+  if (req.session.importSuccess) delete req.session.importSuccess;
+  if (req.session.importError) delete req.session.importError;
   res.render('asset', {
     title: req.t('asset.title'),
     assets,
@@ -39,6 +44,8 @@ const getAssets = async (req, res) => {
     totalAssets,
     inUseCount,
     underRepairCount,
+    importSuccess,
+    importError,
   });
 };
 
@@ -265,6 +272,183 @@ const deleteAsset = async (req, res) => {
   res.redirect('/assets');
 };
 
+// Map Excel header (any language) to internal key
+const HEADER_MAP = {
+  'asset code': 'asset_code', 'asset_code': 'asset_code', 'mã tài sản': 'asset_code', 'code': 'asset_code',
+  'name': 'name', 'tên': 'name', 'asset name': 'name',
+  'serial number': 'serial_number', 'serial_number': 'serial_number', 'số sê-ri': 'serial_number',
+  'category': 'category', 'category code': 'category', 'category_id': 'category', 'danh mục': 'category', 'mã danh mục': 'category',
+  'purchase price': 'purchase_price', 'purchase_price': 'purchase_price', 'giá mua': 'purchase_price', 'price': 'purchase_price',
+  'acquisition date': 'acquisition_date', 'acquisition_date': 'acquisition_date', 'ngày mua': 'acquisition_date', 'date': 'acquisition_date',
+  'department': 'department', 'department code': 'department', 'department_id': 'department', 'phòng ban': 'department', 'mã phòng ban': 'department',
+  'custodian': 'custodian', 'người phụ trách': 'custodian', 'assignee': 'custodian',
+  'location': 'location', 'vị trí': 'location',
+  'warranty expiry': 'warranty_expiry', 'warranty_expiry': 'warranty_expiry', 'hết bảo hành': 'warranty_expiry',
+  'status': 'status', 'trạng thái': 'status',
+  'notes': 'notes', 'ghi chú': 'notes', 'note': 'notes',
+};
+
+const normalizeRow = (row, headerMap) => {
+  const out = {};
+  Object.keys(row).forEach((key) => {
+    const k = String(key).toLowerCase().trim();
+    const field = headerMap[k] || HEADER_MAP[k];
+    if (field && row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
+      out[field] = row[key];
+    }
+  });
+  return out;
+};
+
+const parseExcelFile = (buffer) => {
+  const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false });
+  return rows;
+};
+
+// Multer memory storage for Excel (to use buffer)
+const memoryStorage = multer.memoryStorage();
+const uploadExcel = multer({ storage: memoryStorage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+const importAssetsWithMemory = [
+  uploadExcel.single('excel'),
+  async (req, res) => {
+    if (!req.file) {
+      req.session.importError = req.t('asset.importFileRequired');
+      return res.redirect('/assets');
+    }
+    const [categories, departments] = await Promise.all([
+      assetCategoryQuery.getAll(),
+      departmentQuery.getAll(),
+    ]);
+    const categoryByCode = {};
+    categories.forEach((c) => { categoryByCode[String(c.code).toLowerCase()] = c.id; });
+    const departmentByCode = {};
+    departments.forEach((d) => { departmentByCode[String(d.code).toLowerCase()] = d.id; });
+
+    let rows;
+    try {
+      rows = parseExcelFile(req.file.buffer);
+    } catch (err) {
+      req.session.importError = req.t('asset.importInvalidFile');
+      return res.redirect('/assets');
+    }
+
+    if (!rows.length) {
+      req.session.importError = req.t('asset.importNoRows');
+      return res.redirect('/assets');
+    }
+
+    const createdBy = req.session.user?.email || null;
+    let imported = 0;
+    const errors = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const raw = rows[i];
+      const row = normalizeRow(raw, {});
+      const assetCode = row.asset_code ? String(row.asset_code).trim() : null;
+      const name = row.name ? String(row.name).trim() : null;
+
+      if (!assetCode || !name) {
+        errors.push(`Dòng ${i + 2}: Thiếu mã tài sản hoặc tên.`);
+        continue;
+      }
+
+      const existing = await assetQuery.getByAssetCode(assetCode);
+      if (existing) {
+        errors.push(`Dòng ${i + 2}: Mã tài sản "${assetCode}" đã tồn tại.`);
+        continue;
+      }
+
+      let categoryId = null;
+      if (row.category) {
+        const code = String(row.category).trim().toLowerCase();
+        categoryId = categoryByCode[code] || null;
+      }
+
+      let departmentId = null;
+      if (row.department) {
+        const code = String(row.department).trim().toLowerCase();
+        departmentId = departmentByCode[code] || null;
+      }
+
+      let acquisitionDate = row.acquisition_date || null;
+      if (acquisitionDate && typeof acquisitionDate === 'string') {
+        const d = new Date(acquisitionDate);
+        acquisitionDate = Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+      } else if (acquisitionDate && acquisitionDate instanceof Date) {
+        acquisitionDate = acquisitionDate.toISOString().slice(0, 10);
+      }
+
+      let warrantyExpiry = row.warranty_expiry || null;
+      if (warrantyExpiry && typeof warrantyExpiry === 'string') {
+        const d = new Date(warrantyExpiry);
+        warrantyExpiry = Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+      } else if (warrantyExpiry && warrantyExpiry instanceof Date) {
+        warrantyExpiry = warrantyExpiry.toISOString().slice(0, 10);
+      }
+
+      const status = (row.status && ['active', 'maintenance', 'disposed'].includes(String(row.status).toLowerCase()))
+        ? String(row.status).toLowerCase() : 'active';
+
+      const purchasePrice = row.purchase_price != null ? parseFloat(row.purchase_price) : 0;
+
+      try {
+        await assetQuery.add({
+          assetCode,
+          name,
+          serialNumber: row.serial_number ? String(row.serial_number).trim() : null,
+          categoryId,
+          purchasePrice: Number.isNaN(purchasePrice) ? 0 : purchasePrice,
+          acquisitionDate,
+          departmentId,
+          custodian: row.custodian ? String(row.custodian).trim() : null,
+          location: row.location ? String(row.location).trim() : null,
+          warrantyExpiry,
+          status,
+          image: null,
+          notes: row.notes ? String(row.notes).trim() : null,
+          createdBy,
+        });
+        const writeImgPath = path.join(uploadsDir, `${assetCode}.png`);
+        QRCode.toFile(writeImgPath, assetCode, (err) => { if (err) console.error(err); });
+        imported += 1;
+      } catch (err) {
+        errors.push(`Dòng ${i + 2}: ${err.message || 'Lỗi thêm tài sản.'}`);
+      }
+    }
+
+    if (imported > 0) {
+      req.session.importSuccess = req.t('asset.importSuccessCount', { count: imported });
+    }
+    if (errors.length > 0) {
+      req.session.importError = (req.session.importError || '') + (req.session.importSuccess ? ' ' : '') + errors.slice(0, 10).join(' ');
+      if (errors.length > 10) {
+        req.session.importError += ` ... và ${errors.length - 10} lỗi khác.`;
+      }
+    }
+    if (imported === 0 && errors.length === 0) {
+      req.session.importError = req.t('asset.importNoRows');
+    }
+    res.redirect('/assets');
+  },
+];
+
+const downloadImportTemplate = async (req, res) => {
+  const wb = XLSX.utils.book_new();
+  const headers = [
+    'asset_code', 'name', 'serial_number', 'category', 'purchase_price', 'acquisition_date',
+    'department', 'custodian', 'location', 'warranty_expiry', 'status', 'notes',
+  ];
+  const ws = XLSX.utils.aoa_to_sheet([headers, ['VD001', 'Máy tính xách tay', 'SN123', 'IT', 15000000, '2024-01-15', 'PB01', 'Nguyễn Văn A', 'Tầng 2', '2027-01-15', 'active', 'Ghi chú mẫu']]);
+  XLSX.utils.book_append_sheet(wb, ws, 'Assets');
+  res.setHeader('Content-Disposition', 'attachment; filename=asset_import_template.xlsx');
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.end(XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }));
+};
+
 module.exports = {
   getAssets,
   getAssetDetail,
@@ -272,4 +456,6 @@ module.exports = {
   updateAsset,
   disposeAsset,
   deleteAsset,
+  importAssets: importAssetsWithMemory,
+  downloadImportTemplate,
 };

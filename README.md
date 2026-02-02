@@ -46,7 +46,7 @@ Phần mềm quản lý tài sản cố định (Fixed Assets Management Softwar
 npm start
 ```
 
-Truy cập [http://localhost:3000](http://localhost:3000).
+Truy cập [http://localhost:3001](http://localhost:3001).
 
 ### Tài khoản đăng nhập mặc định
 

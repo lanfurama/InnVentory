@@ -83,7 +83,7 @@
 | Biến | Ý nghĩa | Ví dụ |
 |------|---------|--------|
 | HOSTNAME | Host chạy app | localhost |
-| PORT | Cổng HTTP | 3000 |
+| PORT | Cổng HTTP | 3001 |
 | SESSION_KEYS | Key cookie session (tùy chọn) | Chuỗi bí mật, ổn định khi restart |
 | PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT | Kết nối PostgreSQL | Theo môi trường IT |
 

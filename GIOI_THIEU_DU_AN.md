@@ -43,7 +43,7 @@
 1. **Yêu cầu:** Node.js, PostgreSQL
 2. Tạo file `.env` từ `.env.example` và cấu hình kết nối DB
 3. Chạy `npm install` → `npm run setup-db` → `npm start`
-4. Truy cập `http://localhost:3000` và đăng nhập (xem README.md cho tài khoản mẫu)
+4. Truy cập `http://localhost:3001` và đăng nhập (xem README.md cho tài khoản mẫu)
 
 ## Tài liệu chi tiết
 

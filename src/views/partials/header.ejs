@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= locals.title ? title : (typeof t !== 'undefined' ? t('stock.title') : 'Stock') %></title>
+  <title><%= locals.title ? title : (typeof t !== 'undefined' ? t('asset.title') : 'Fixed Assets') %></title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -19,6 +19,8 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/dist/css/adminlte.min.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
   <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/css/style.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
+  <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/css/custom-components.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
+  <link rel="stylesheet" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/css/custom-dashboard.css?v=<%= typeof v !== 'undefined' ? v : '' %>">
 </head>
 <body class="hold-transition sidebar-mini">
   <script>

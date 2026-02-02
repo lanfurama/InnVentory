@@ -1,0 +1,84 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('reports.assetsLedger') : 'Assets Ledger' %></h1>
+          </div>
+          <div class="col-sm-6">
+            <div id="bt" class="float-sm-right">
+              <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fas fa-print"></i> <%= typeof t !== 'undefined' ? t('common.print') : 'Print' %></button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('reports.filters') : 'Filters' %></h3>
+          </div>
+          <div class="card-body">
+            <form method="get" action="/reports/assets-ledger" class="form-inline flex-wrap">
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('asset.title') : 'Asset' %></label>
+                <select name="asset_id" class="form-control">
+                  <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'All' %></option>
+                  <% (assets || []).forEach(a => { %>
+                  <option value="<%= a.id %>" <%= filters && filters.asset_id == a.id ? 'selected' : '' %>><%= a.asset_code %> - <%= a.name %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('reports.dateFrom') : 'Date From' %></label>
+                <input type="date" name="date_from" class="form-control" value="<%= filters && filters.date_from ? filters.date_from : '' %>" />
+              </div>
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('reports.dateTo') : 'Date To' %></label>
+                <input type="date" name="date_to" class="form-control" value="<%= filters && filters.date_to ? filters.date_to : '' %>" />
+              </div>
+              <div class="form-group mb-2">
+                <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('reports.apply') : 'Apply' %></button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <% (ledgers || []).forEach((ledger) => { %>
+        <div class="card">
+          <div class="card-header">
+            <strong><%= ledger.asset.asset_code %> - <%= ledger.asset.name %></strong>
+          </div>
+          <div class="card-body">
+            <p>
+              <strong><%= typeof t !== 'undefined' ? t('reports.openingBalance') : 'Opening Balance' %>:</strong>
+              <%= Number(ledger.openingBalance).toLocaleString() %> |
+              <strong><%= typeof t !== 'undefined' ? t('reports.closingBalance') : 'Closing Balance' %>:</strong>
+              <%= Number(ledger.closingBalance).toLocaleString() %>
+            </p>
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th><%= typeof t !== 'undefined' ? t('depreciation.periodStart') : 'Period Start' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('depreciation.periodEnd') : 'Period End' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('depreciation.amount') : 'Amount' %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% (ledger.periodRecords || []).forEach((rec, i) => { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= rec.period_start ? rec.period_start.toString().slice(0, 10) : '-' %></td>
+                  <td><%= rec.period_end ? rec.period_end.toString().slice(0, 10) : '-' %></td>
+                  <td><%= rec.amount ? Number(rec.amount).toLocaleString() : '-' %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

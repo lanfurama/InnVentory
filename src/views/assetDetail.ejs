@@ -1,0 +1,146 @@
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-modern">
+            <li class="breadcrumb-item"><a href="/assets"><%= typeof t !== 'undefined' ? t('breadcrumb.assets') : 'Assets' %></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%= typeof t !== 'undefined' ? t('breadcrumb.details') : 'Details' %></li>
+          </ol>
+        </nav>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('assetDetail.assetHistory') : 'Asset History' %></h1>
+          <div class="page-header-actions">
+            <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>"><i class="fas fa-bell"></i></a>
+            <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
+          </div>
+        </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <section class="content">
+      <div class="container-fluid">
+        <p class="text-muted mb-4" style="font-size: 0.9rem;"><%= typeof t !== 'undefined' ? t('assetDetail.assetHistorySub') : 'Audit trail for lifecycle events and financial adjustments.' %></p>
+
+        <div class="row">
+          <!-- Left: Asset card + Attachments -->
+          <div class="col-lg-4">
+            <div class="card asset-detail-card mb-4">
+              <div class="asset-detail-image-wrap position-relative">
+                <% if(asset.image) { %>
+                <img src="/uploads/<%= asset.image %>" class="card-img-top asset-detail-image" alt="<%= asset.name %>">
+                <% } else { %>
+                <div class="asset-detail-image-placeholder">
+                  <i class="fas fa-box fa-3x text-muted"></i>
+                </div>
+                <% } %>
+                <span class="status-badge status-<%= asset.status === 'disposed' ? 'retired' : asset.status === 'maintenance' ? 'in-repair' : 'active' %> position-absolute" style="top:12px;right:12px;">
+                  <%= asset.status === 'disposed' ? (typeof t !== 'undefined' ? t('asset.statusDisposed') : 'Retired') : asset.status === 'maintenance' ? (typeof t !== 'undefined' ? t('asset.statusMaintenance') : 'In Repair') : (typeof t !== 'undefined' ? t('asset.statusActive') : 'Active') %>
+                </span>
+              </div>
+              <div class="card-body">
+                <h2 class="h5 card-title mb-2"><%= asset.name %></h2>
+                <p class="card-text text-muted small mb-3"><%= asset.notes || (asset.category_name || '') %></p>
+                <dl class="asset-detail-dl mb-0">
+                  <div class="d-flex justify-content-between py-2 border-bottom border-light">
+                    <dt class="text-muted small mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.tagId') : 'TAG ID' %></dt>
+                    <dd class="mb-0 font-weight-bold"><%= asset.asset_code %></dd>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom border-light">
+                    <dt class="text-muted small mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.acquired') : 'ACQUIRED' %></dt>
+                    <dd class="mb-0"><%= asset.acquisition_date ? asset.acquisition_date.toString().slice(0,10) : '-' %></dd>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom border-light">
+                    <dt class="text-muted small mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.cost') : 'COST' %></dt>
+                    <dd class="mb-0"><%= asset.purchase_price ? '$' + Number(asset.purchase_price).toLocaleString() : '-' %></dd>
+                  </div>
+                  <div class="d-flex justify-content-between py-2">
+                    <dt class="text-muted small mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.location') : 'LOCATION' %></dt>
+                    <dd class="mb-0"><%= asset.location || asset.department_name || '-' %></dd>
+                  </div>
+                </dl>
+                <% if(typeof locals.user != 'undefined') { %>
+                <a href="/assets" class="btn btn-primary btn-primary-rounded btn-sm mt-3 w-100"><i class="fas fa-pencil-alt mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.editDetails') : 'Edit Details' %></a>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0 small"><%= typeof t !== 'undefined' ? t('assetDetail.attachments') : 'Attachments' %></h3>
+                <a href="#" class="small"><%= typeof t !== 'undefined' ? t('assetDetail.viewAll') : 'View All' %></a>
+              </div>
+              <div class="card-body py-3">
+                <p class="text-muted small mb-0"><%= typeof t !== 'undefined' ? t('assetDetail.noEvents') : 'No attachments.' %></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Timeline + Log a New Event -->
+          <div class="col-lg-8">
+            <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 asset-detail-toolbar-wrap">
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print();"><i class="fas fa-download mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.exportLog') : 'Export Log' %></button>
+                <% if(typeof locals.user != 'undefined') { %>
+                <a href="/asset-maintenance?asset=<%= asset.id %>" class="btn btn-primary btn-primary-rounded btn-sm"><i class="fas fa-plus mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.newTransaction') : 'New Transaction' %></a>
+                <% } %>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
+                <ul class="nav nav-pills nav-sm asset-history-tabs">
+                  <li class="nav-item"><a class="nav-link active" href="#" data-filter="all"><%= typeof t !== 'undefined' ? t('assetDetail.allEvents') : 'All Events' %></a></li>
+                  <li class="nav-item"><a class="nav-link" href="#" data-filter="maintenance"><%= typeof t !== 'undefined' ? t('assetDetail.maintenanceTab') : 'Maintenance' %></a></li>
+                  <li class="nav-item"><a class="nav-link" href="#" data-filter="transfer"><%= typeof t !== 'undefined' ? t('assetDetail.transfersTab') : 'Transfers' %></a></li>
+                  <li class="nav-item"><a class="nav-link" href="#" data-filter="depreciation"><%= typeof t !== 'undefined' ? t('assetDetail.financialTab') : 'Financial' %></a></li>
+                </ul>
+                <div class="dropdown">
+                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"><%= typeof t !== 'undefined' ? t('assetDetail.sortByDate') : 'Sort by Date' %></button>
+                  <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Newest first</a><a class="dropdown-item" href="#">Oldest first</a></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="asset-history-timeline">
+              <% if(typeof assetHistoryEvents !== 'undefined' && assetHistoryEvents.length) { %>
+              <% assetHistoryEvents.forEach(function(ev) { %>
+              <div class="asset-history-event asset-history-event-<%= ev.type %>" data-type="<%= ev.type %>">
+                <div class="asset-history-event-icon">
+                  <% if(ev.type === 'maintenance') { %><i class="fas fa-wrench"></i>
+                  <% } else if(ev.type === 'transfer') { %><i class="fas fa-exchange-alt"></i>
+                  <% } else if(ev.type === 'depreciation') { %><i class="fas fa-chart-line"></i>
+                  <% } else { %><i class="fas fa-shopping-cart"></i><% } %>
+                </div>
+                <div class="asset-history-event-body">
+                  <h4 class="asset-history-event-title"><%= ev.title %></h4>
+                  <p class="asset-history-event-desc mb-1"><%= ev.description %></p>
+                  <% if(ev.details && ev.details.length) { %>
+                  <ul class="asset-history-event-details list-unstyled small text-muted mb-0">
+                    <% ev.details.forEach(function(d) { %>
+                    <li><%= d.label %>: <%= d.value %></li>
+                    <% }); %>
+                  </ul>
+                  <% } %>
+                </div>
+                <div class="asset-history-event-date text-muted small">
+                  <%= ev.date ? (typeof moment !== 'undefined' ? moment(ev.date).format('MMM DD, YYYY') : new Date(ev.date).toLocaleDateString()) : '-' %>
+                </div>
+              </div>
+              <% }); %>
+              <% } else { %>
+              <p class="text-muted text-center py-4"><%= typeof t !== 'undefined' ? t('assetDetail.noEvents') : 'No events yet.' %></p>
+              <% } %>
+            </div>
+
+            <div class="card border-dashed mt-4 log-new-event-card">
+              <div class="card-body text-center py-5">
+                <div class="log-new-event-icon mb-3"><i class="fas fa-plus fa-2x text-primary"></i></div>
+                <h4 class="h5 mb-2"><%= typeof t !== 'undefined' ? t('assetDetail.logNewEvent') : 'Log a New Event' %></h4>
+                <p class="text-muted small mb-4"><%= typeof t !== 'undefined' ? t('assetDetail.logNewEventDesc') : 'Add a new maintenance record, transfer location, adjust value, or dispose of this asset.' %></p>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                  <a href="/asset-maintenance?asset=<%= asset.id %>" class="btn btn-primary btn-primary-rounded btn-sm"><i class="fas fa-wrench mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.logMaintenance') : 'Log Maintenance' %></a>
+                  <a href="/asset-transfers?asset=<%= asset.id %>" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm"><i class="fas fa-exchange-alt mr-1"></i> <%= typeof t !== 'undefined' ? t('assetDetail.transfer') : 'Transfer' %></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<%- include('./partials/footer') %>

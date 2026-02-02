@@ -37,6 +37,27 @@
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.html5.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.print.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/plugins/datatables-buttons/js/buttons.colVis.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- ApexCharts -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/node_modules/apexcharts/dist/apexcharts.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Dashboard charts (init after ApexCharts) -->
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/dashboard-charts.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script>
+(function() {
+  if (window.dashboardChartConfig && typeof initDashboardCharts === 'function') {
+    try { initDashboardCharts(window.dashboardChartConfig); } catch (e) { console.warn('Charts init:', e); }
+    window.dashboardChartConfig = null;
+  }
+})();
+</script>
+<script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/depreciation-charts.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<script>
+(function() {
+  if (window.depreciationChartConfig && typeof initDepreciationCharts === 'function') {
+    try { initDepreciationCharts(window.depreciationChartConfig); } catch (e) { console.warn('Depreciation charts init:', e); }
+    window.depreciationChartConfig = null;
+  }
+})();
+</script>
 <!-- AdminLTE App -->
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/dist/js/adminlte.min.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
 <!-- Print QR Code script -->

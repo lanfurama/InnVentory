@@ -1,0 +1,70 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('reports.depreciationStatement') : 'Depreciation Statement' %></h1>
+          </div>
+          <div class="col-sm-6">
+            <div id="bt" class="float-sm-right"></div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('reports.filters') : 'Filters' %></h3>
+          </div>
+          <div class="card-body">
+            <form method="get" action="/reports/depreciation-statement" class="form-inline flex-wrap">
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('reports.dateFrom') : 'Date From' %></label>
+                <input type="date" name="date_from" class="form-control" value="<%= filters && filters.date_from ? filters.date_from : '' %>" />
+              </div>
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('reports.dateTo') : 'Date To' %></label>
+                <input type="date" name="date_to" class="form-control" value="<%= filters && filters.date_to ? filters.date_to : '' %>" />
+              </div>
+              <div class="form-group mb-2">
+                <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('reports.apply') : 'Apply' %></button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <table id="depreciationStatementTable" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.assetCode') : 'Asset Code' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.name') : 'Asset' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.category') : 'Category' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.purchasePrice') : 'Purchase Price' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('depreciation.periodStart') : 'Period Start' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('depreciation.periodEnd') : 'Period End' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('depreciation.amount') : 'Amount' %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% (records || []).forEach((el, i) => { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= el.asset_code %></td>
+                  <td><%= el.asset_name %></td>
+                  <td><%= el.category_name || '-' %></td>
+                  <td><%= el.purchase_price ? Number(el.purchase_price).toLocaleString() : '-' %></td>
+                  <td><%= el.period_start ? el.period_start.toString().slice(0, 10) : '-' %></td>
+                  <td><%= el.period_end ? el.period_end.toString().slice(0, 10) : '-' %></td>
+                  <td><%= el.amount ? Number(el.amount).toLocaleString() : '-' %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

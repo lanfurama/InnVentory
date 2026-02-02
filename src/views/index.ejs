@@ -1,9 +1,24 @@
-<%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1 class="m-0"><%= typeof t !== 'undefined' ? t('dashboard.title') : 'Dashboard' %></h1>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('dashboard.title') : 'Dashboard' %> Overview</h1>
+          <div class="page-header-actions">
+            <div class="search-bar-rounded">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('nav.searchAssetsPlaceholder') : 'Search assets, tags, or locations...' %>" aria-label="Search">
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+              </div>
+            </div>
+            <% if(typeof locals.user != 'undefined') { %>
+            <a href="/assets" class="btn btn-primary btn-primary-rounded"><i class="fas fa-plus mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.addAsset') : 'Add Asset' %></a>
+            <% } %>
+            <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>"><i class="fas fa-bell"></i></a>
+            <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
+          </div>
+        </div>
+        </div>
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content-header -->
@@ -11,88 +26,184 @@
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
+        <!-- Metric Cards -->
+        <div class="dashboard-metrics-row">
+          <div class="metric-card">
+            <div class="metric-icon bg-blue">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('dashboard.totalValue') : 'Total Asset Valuation' %></div>
+              <div class="metric-value">$<%= typeof totalValue !== 'undefined' && totalValue ? Number(totalValue).toLocaleString() : '0' %></div>
+              <div class="metric-trend positive">
+                <i class="fas fa-arrow-up"></i> <%= typeof yoyTrend !== 'undefined' ? yoyTrend : '+0%' %>
+              </div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-purple">
+              <i class="fas fa-th-large"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('dashboard.assets') : 'Total Asset Count' %></div>
+              <div class="metric-value"><%= totalAssets || 0 %></div>
+              <div class="metric-trend positive">
+                <i class="fas fa-arrow-up"></i> +<%= typeof newAssetsThisMonth !== 'undefined' ? newAssetsThisMonth : 0 %> <%= typeof t !== 'undefined' ? t('dashboard.newThisMonth') : 'New' %>
+              </div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-orange">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('dashboard.warrantyExpiries') : 'Warranty Expiries (30 Days)' %></div>
+              <div class="metric-value"><%= typeof warrantyExpiring !== 'undefined' ? warrantyExpiring : 0 %></div>
+              <div class="metric-trend negative">
+                <%= typeof t !== 'undefined' ? t('dashboard.actionRequired') : 'Action Req' %>
+              </div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-gray">
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('dashboard.retiredYTD') : 'Retired Assets (YTD)' %></div>
+              <div class="metric-value"><%= typeof retiredYTD !== 'undefined' ? retiredYTD : 0 %></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="dashboard-charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title"><%= typeof t !== 'undefined' ? t('dashboard.projectedDepreciation') : 'Projected Depreciation' %></h3>
+                <div class="chart-subtitle">Fiscal Year <%= new Date().getFullYear() %></div>
+              </div>
+              <span class="chart-legend-dot" style="background:#3498db"></span> <span><%= typeof t !== 'undefined' ? t('dashboard.projectedValue') : 'Projected Value' %></span>
+            </div>
+            <div id="depreciationTrendsChart" style="min-height: 280px;"></div>
+          </div>
+          <div class="dashboard-charts-right">
+            <div class="chart-card">
+              <h3 class="chart-title"><%= typeof t !== 'undefined' ? t('dashboard.assetHealth') : 'Asset Health' %></h3>
+              <% const totalA = parseInt(totalAssets, 10) || 1; const activeCount = totalA; const maintCount = 0; const dispCount = typeof retiredYTD !== 'undefined' ? parseInt(retiredYTD, 10) : 0; const opPct = totalA > 0 ? Math.round((activeCount / totalA) * 100) : 92; const repPct = totalA > 0 ? Math.round((maintCount / totalA) * 100) : 5; const retPct = totalA > 0 ? Math.round((dispCount / totalA) * 100) : 3; %>
+              <div class="asset-health-item">
+                <div class="asset-health-label"><span><%= typeof t !== 'undefined' ? t('dashboard.operational') : 'Operational' %></span><span class="asset-health-value"><%= opPct %>%</span></div>
+                <div class="asset-health-bar"><div class="asset-health-bar-fill operational" style="width:<%= opPct %>%"></div></div>
+              </div>
+              <div class="asset-health-item">
+                <div class="asset-health-label"><span><%= typeof t !== 'undefined' ? t('dashboard.inRepair') : 'In Repair' %></span><span class="asset-health-value"><%= repPct %>%</span></div>
+                <div class="asset-health-bar"><div class="asset-health-bar-fill in-repair" style="width:<%= repPct %>%"></div></div>
+              </div>
+              <div class="asset-health-item">
+                <div class="asset-health-label"><span><%= typeof t !== 'undefined' ? t('dashboard.retiredDisposed') : 'Retired/Disposed' %></span><span class="asset-health-value"><%= retPct %>%</span></div>
+                <div class="asset-health-bar"><div class="asset-health-bar-fill retired" style="width:<%= Math.max(retPct, 3) %>%"></div></div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <h3 class="chart-title"><%= typeof t !== 'undefined' ? t('dashboard.topCategories') : 'Top Categories' %></h3>
+              <div id="assetDistributionChart" style="min-height: 220px;"></div>
+              <% if (typeof byCategory !== 'undefined' && byCategory.length) { %>
+              <ul class="top-categories-list mt-2">
+                <% byCategory.slice(0, 5).forEach(function(cat, i) { const colors = ['#3498db', '#9b59b6', '#1abc9c', '#e74c3c', '#f39c12']; %>
+                <li><span class="d-flex align-items-center"><span class="top-categories-dot" style="background:<%= colors[i % 5] %>"></span><span class="top-categories-name"><%= cat.name %></span></span><span class="top-categories-count"><%= cat.count %></span></li>
+                <% }); %>
+              </ul>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Asset Activity -->
+        <div class="card dashboard-activity-card enhanced-table-wrapper">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('dashboard.recentActivity') : 'Recent Asset Activity' %></h3>
+            <a href="/assets" class="view-all-link"><%= typeof t !== 'undefined' ? t('dashboard.viewAll') : 'View All' %></a>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover enhanced-table mb-0">
+                <thead>
+                  <tr>
+                    <th><%= typeof t !== 'undefined' ? t('dashboard.assetTag') : 'ASSET TAG' %></th>
+                    <th><%= typeof t !== 'undefined' ? t('asset.name') : 'NAME' %></th>
+                    <th><%= typeof t !== 'undefined' ? t('dashboard.event') : 'EVENT' %></th>
+                    <th><%= typeof t !== 'undefined' ? t('dashboard.user') : 'USER' %></th>
+                    <th><%= typeof t !== 'undefined' ? t('dashboard.date') : 'DATE' %></th>
+                    <th><%= typeof t !== 'undefined' ? t('asset.status') : 'STATUS' %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (typeof recentActivity !== 'undefined' && recentActivity.length) { %>
+                  <% recentActivity.forEach(function(act) { %>
+                  <tr>
+                    <td><a href="/assets/<%= act.id %>" class="asset-tag-link">#<%= act.asset_code %></a></td>
+                    <td><%= act.name %></td>
+                    <td><%= act.event_type %></td>
+                    <td>
+                      <% if (act.user_name) { %>
+                      <span class="avatar-circle avatar-circle-sm"><%= (act.user_name || 'U').toString().charAt(0).toUpperCase() %></span> <%= act.user_name %>
+                      <% } else { %>
+                      <span class="text-muted">N/A</span>
+                      <% } %>
+                    </td>
+                    <td><%= act.event_date ? new Date(act.event_date).toLocaleDateString() : '-' %></td>
+                    <td>
+                      <span class="status-badge status-<%= act.status === 'disposed' ? 'retired' : act.status === 'maintenance' ? 'in-repair' : 'active' %>"><%= act.status === 'disposed' ? 'Retired' : act.status === 'maintenance' ? 'In Repair' : 'Active' %></span>
+                    </td>
+                  </tr>
+                  <% }); %>
+                  <% } else { %>
+                  <tr><td colspan="6" class="text-center text-muted py-4"><%= typeof t !== 'undefined' ? t('dashboard.noRecentActivity') : 'No recent activity' %></td></tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <% if(typeof locals.user != 'undefined') { %>
+        <div class="row mt-3">
+          <div class="col-12">
             <div class="small-box bg-info">
               <div class="inner">
-                <% if(totalStock>0) { %> 
-                <h3><%= totalStock %></h3>
-                <% }else{ %> 
-                <h3>0</h3>
-                <% } %> 
-
-                <p><%= typeof t !== 'undefined' ? t('dashboard.stock') : 'Stock' %></p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-boxes"></i>
-              </div>
-              <a href="/stock" class="small-box-footer"><%= typeof t !== 'undefined' ? t('common.more') : 'More' %> <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-                <% if(totalQtyBM>0) { %> 
-                <h3><%= totalQtyBM %></h3>
-                <% }else{ %> 
-                <h3>0</h3>
-                <% } %> 
-
-                <p><%= typeof t !== 'undefined' ? t('dashboard.stockIn') : 'Stock In' %></p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-box"></i>
-              </div>
-              <a href="/stock-in" class="small-box-footer"><%= typeof t !== 'undefined' ? t('common.more') : 'More' %> <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <% if(totalQtyBK>0) { %> 
-                <h3><%= totalQtyBK %></h3>
-                <% }else{ %> 
-                <h3>0</h3>
-                <% } %> 
-
-                <p><%= typeof t !== 'undefined' ? t('dashboard.stockOut') : 'Stock Out' %></p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-box-open"></i>
-              </div>
-              <a href="/stock-out" class="small-box-footer"><%= typeof t !== 'undefined' ? t('common.more') : 'More' %> <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <% if(typeof locals.user != 'undefined') { %>
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <% if(totalUsers>0) { %> 
-                <h3><%= totalUsers %></h3>
-                <% }else{ %>
-                <h3>0</h3> 
-                <% } %> 
-
+                <h3><%= totalUsers || 0 %></h3>
                 <p><%= typeof t !== 'undefined' ? t('dashboard.users') : 'Users' %></p>
               </div>
-              <div class="icon">
-                <i class="fas fa-users"></i>
-              </div>
+              <div class="icon"><i class="fas fa-users"></i></div>
               <a href="/users" class="small-box-footer"><%= typeof t !== 'undefined' ? t('common.more') : 'More' %> <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
-          <!-- ./col -->
-          <% } %> 
         </div>
-        <!-- /.row -->
+        <% } %>
       </div><!-- /.container-fluid -->
     </section>
-<%- include('./partials/footer') %> 
+<script>
+(function() {
+  var depreciationTrends = <%- JSON.stringify(typeof depreciationTrends !== 'undefined' ? depreciationTrends : []) %>;
+  var byCategory = <%- JSON.stringify(typeof byCategory !== 'undefined' ? byCategory : []) %>;
+  var categories = depreciationTrends.map(function(r) {
+    var m = r.month;
+    if (!m) return '';
+    var parts = m.split('-');
+    var monthNames = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    return monthNames[parseInt(parts[1], 10) - 1] || m;
+  });
+  var seriesData = depreciationTrends.map(function(r) { return parseFloat(r.amount) || 0; });
+  if (seriesData.length === 0) {
+    categories = ['JAN','MAR','JUN','SEP','DEC'];
+    seriesData = [0, 0, 0, 0, 0];
+  }
+  var distLabels = byCategory.map(function(c) { return c.name; });
+  var distSeries = byCategory.map(function(c) { return parseInt(c.count, 10) || 0; });
+  window.dashboardChartConfig = {
+    depreciationTrends: { containerId: 'depreciationTrendsChart', categories: categories, series: seriesData },
+    assetDistribution: { containerId: 'assetDistributionChart', series: distSeries, labels: distLabels }
+  };
+})();
+</script>
+<%- include('./partials/footer') %>

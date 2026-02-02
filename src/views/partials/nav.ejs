@@ -1,3 +1,4 @@
+<% const navUser = (typeof locals.user != 'undefined' ? locals.user : (typeof locals.us != 'undefined' ? locals.us : 'U')); %>
 <div class="wrapper">
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -9,7 +10,24 @@
     </ul>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
+    <ul class="navbar-nav ml-auto align-items-center">
+      <li class="nav-item d-none d-md-block">
+        <div class="input-group input-group-sm" style="max-width: 220px;">
+          <input type="text" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('nav.searchPlaceholder') : 'Search...' %>" aria-label="Search">
+          <div class="input-group-append">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>">
+          <i class="fas fa-bell"></i>
+          <span class="badge badge-danger navbar-badge">0</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
+      </li>
       <li class="nav-item">
         <a class="nav-link">
           <div class="custom-control custom-switch">
@@ -19,17 +37,26 @@
         </a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i>
+        <a class="nav-link dropdown-toggle d-flex align-items-center" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar-circle avatar-circle-sm mr-2">
+            <%= (navUser || 'U').toString().charAt(0).toUpperCase() %>
+          </span>
           <% if(typeof locals.user != 'undefined') { %>
-          <%= locals.user ? user : (typeof t !== 'undefined' ? t('nav.superAdmin') : 'Super Admin') %>
+          <span><%= locals.user ? user : (typeof t !== 'undefined' ? t('nav.superAdmin') : 'Admin') %></span>
           <% } else if (typeof locals.us != 'undefined') { %>
-          <%= locals.us ? us : (typeof t !== 'undefined' ? t('nav.user') : 'User') %>
+          <span><%= locals.us ? us : (typeof t !== 'undefined' ? t('nav.user') : 'User') %></span>
+          <% } else { %>
+          <span><%= typeof t !== 'undefined' ? t('nav.user') : 'User' %></span>
           <% } %>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          <a class="dropdown-item" href="/account"><%= typeof t !== 'undefined' ? t('nav.editAccount') : 'Edit Account' %></a>
+          <span class="dropdown-item-text small">
+            <span class="badge badge-primary"><%= typeof locals.user != 'undefined' ? (typeof t !== 'undefined' ? t('nav.superAdmin') : 'Admin') : (typeof t !== 'undefined' ? t('nav.user') : 'User') %></span>
+          </span>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/logout"><%= typeof t !== 'undefined' ? t('nav.logout') : 'Logout' %></a>
+          <a class="dropdown-item" href="/account"><i class="fas fa-user-edit mr-2"></i><%= typeof t !== 'undefined' ? t('nav.editAccount') : 'Edit Account' %></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i><%= typeof t !== 'undefined' ? t('nav.logout') : 'Logout' %></a>
         </div>
       </li>
     </ul>
@@ -37,21 +64,22 @@
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="main-sidebar sidebar-light elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
-      <img src="/images/logo.svg" alt="InnVentory Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light"><b><%= typeof t !== 'undefined' ? t('nav.appName') : 'InnVentory' %></b></span>
+      <img src="/images/logo.svg" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">
+        <b><%= typeof t !== 'undefined' ? t('nav.appName') : 'InnVentory' %></b>
+        <small class="d-block text-muted" style="font-size: 0.7rem; font-weight: normal;"><%= typeof t !== 'undefined' ? t('nav.enterpriseEdition') : 'Enterprise Edition' %></small>
+      </span>
     </a>
 
     <!-- Sidebar -->
-    <div class="sidebar">
-
+    <div class="sidebar sidebar-with-footer">
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-                with font-awesome or any other icon font library -->
+          <li class="sidebar-nav-group"><%= typeof t !== 'undefined' ? t('nav.main') : 'MAIN' %></li>
           <li class="nav-item">
             <% const dashTitle = typeof t !== 'undefined' ? t('nav.dashboard') : 'Dashboard'; if(locals.title == dashTitle) { %>
             <a href="/" class="nav-link active">
@@ -64,55 +92,132 @@
               </p>
             </a>
           </li>
-          <% const stockTitle = typeof t !== 'undefined' ? t('stock.title') : 'Stock'; const stockInTitle = typeof t !== 'undefined' ? t('stockIn.title') : 'Stock In'; const stockOutTitle = typeof t !== 'undefined' ? t('stockOut.title') : 'Stock Out'; if(locals.title == stockTitle || locals.title == stockInTitle || locals.title == stockOutTitle) { %>
+          <% const assetTitle = typeof t !== 'undefined' ? t('asset.title') : 'Assets'; const assetDetailTitle = typeof t !== 'undefined' ? t('assetDetail.title') : 'Asset Detail'; const transferTitle = typeof t !== 'undefined' ? t('assetTransfer.title') : 'Transfers'; const maintTitle = typeof t !== 'undefined' ? t('assetMaintenance.title') : 'Maintenance'; if(locals.title == assetTitle || locals.title == assetDetailTitle || locals.title == transferTitle || locals.title == maintTitle) { %>
           <li class="nav-item menu-open">
           <% } else { %>
           <li class="nav-item">
           <% } %>
-            <% if(locals.title == stockTitle || locals.title == stockInTitle || locals.title == stockOutTitle) { %>
+            <% if(locals.title == assetTitle || locals.title == assetDetailTitle || locals.title == transferTitle || locals.title == maintTitle) { %>
             <a href="#" class="nav-link active">
             <% } else { %>
             <a href="#" class="nav-link">
             <% } %>
               <i class="nav-icon fas fa-boxes"></i>
               <p>
-                <%= typeof t !== 'undefined' ? t('nav.items') : 'Items' %>
+                <%= typeof t !== 'undefined' ? t('nav.assets') : 'Assets' %>
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <% if(locals.title == stockTitle) { %>
-                <a href="/stock" class="nav-link active">
+                <% if(locals.title == assetTitle) { %>
+                <a href="/assets" class="nav-link active">
                 <% } else { %>
-                <a href="/stock" class="nav-link">
+                <a href="/assets" class="nav-link">
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
-                  <p><%= typeof t !== 'undefined' ? t('nav.stock') : 'Stock' %></p>
+                  <p><%= typeof t !== 'undefined' ? t('nav.assets') : 'Assets' %></p>
                 </a>
               </li>
               <li class="nav-item">
-                <% if(locals.title == stockInTitle) { %>
-                <a href="/stock-in" class="nav-link active">
+                <% if(locals.title == transferTitle) { %>
+                <a href="/asset-transfers" class="nav-link active">
                 <% } else { %>
-                <a href="/stock-in" class="nav-link">
+                <a href="/asset-transfers" class="nav-link">
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
-                  <p><%= typeof t !== 'undefined' ? t('nav.stockIn') : 'Stock In' %></p>
+                  <p><%= typeof t !== 'undefined' ? t('nav.assetTransfers') : 'Transfers' %></p>
                 </a>
               </li>
               <li class="nav-item">
-                <% if(locals.title == stockOutTitle) { %>
-                <a href="/stock-out" class="nav-link active">
+                <% if(locals.title == maintTitle) { %>
+                <a href="/asset-maintenance" class="nav-link active">
                 <% } else { %>
-                <a href="/stock-out" class="nav-link">
+                <a href="/asset-maintenance" class="nav-link">
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
-                  <p><%= typeof t !== 'undefined' ? t('nav.stockOut') : 'Stock Out' %></p>
+                  <p><%= typeof t !== 'undefined' ? t('nav.assetMaintenance') : 'Maintenance' %></p>
                 </a>
               </li>
             </ul>
           </li>
+          <li class="sidebar-nav-group"><%= typeof t !== 'undefined' ? t('nav.management') : 'MANAGEMENT' %></li>
+          <% const deprecTitle = typeof t !== 'undefined' ? t('depreciation.title') : 'Depreciation Calculation'; const deprecShowTitle = typeof t !== 'undefined' ? t('depreciation.showTitle') : 'Depreciation Calculation Result'; const reportTitle = typeof t !== 'undefined' ? t('nav.reports') : 'Reports'; const reportsOverviewTitle = typeof t !== 'undefined' ? t('reports.overview') : 'Financial Reporting & Analytics'; const assetsListingTitle = typeof t !== 'undefined' ? t('reports.assetsListing') : 'Assets Listing'; const transListingTitle = typeof t !== 'undefined' ? t('reports.transactionListing') : 'Transaction Listing'; const depStatementTitle = typeof t !== 'undefined' ? t('reports.depreciationStatement') : 'Depreciation Statement'; const assetsLedgerTitle = typeof t !== 'undefined' ? t('reports.assetsLedger') : 'Assets Ledger'; const isReportActive = [deprecTitle, deprecShowTitle, reportTitle, reportsOverviewTitle, assetsListingTitle, transListingTitle, depStatementTitle, assetsLedgerTitle].includes(locals.title); %>
+          <li class="nav-item">
+            <% if(isReportActive) { %>
+            <a href="#" class="nav-link active">
+            <% } else { %>
+            <a href="#" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-chart-bar"></i>
+              <p>
+                <%= typeof t !== 'undefined' ? t('nav.reports') : 'Reports' %>
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/reports" class="nav-link <%= locals.title == reportsOverviewTitle ? 'active' : '' %>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('reports.overview') : 'Reporting & Analytics' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/depreciation" class="nav-link <%= locals.title == deprecTitle ? 'active' : '' %>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('depreciation.title') : 'Depreciation Calculation' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/reports/assets-listing" class="nav-link <%= locals.title == assetsListingTitle ? 'active' : '' %>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('reports.assetsListing') : 'Assets Listing' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/reports/transaction-listing" class="nav-link <%= locals.title == transListingTitle ? 'active' : '' %>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('reports.transactionListing') : 'Transaction Listing' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/reports/depreciation-statement" class="nav-link <%= locals.title == depStatementTitle ? 'active' : '' %>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('reports.depreciationStatement') : 'Depreciation Statement' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/reports/assets-ledger" class="nav-link <%= locals.title == assetsLedgerTitle ? 'active' : '' %>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('reports.assetsLedger') : 'Assets Ledger' %></p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <% const catTitle = typeof t !== 'undefined' ? t('assetCategory.title') : 'Categories'; if(typeof locals.user != 'undefined') { %>
+          <li class="nav-item">
+            <% if(locals.title == catTitle) { %>
+            <a href="/asset-categories" class="nav-link active">
+            <% } else { %>
+            <a href="/asset-categories" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-tags"></i>
+              <p><%= typeof t !== 'undefined' ? t('nav.assetCategories') : 'Categories' %></p>
+            </a>
+          </li>
+          <% } %>
+          <% const deptTitle = typeof t !== 'undefined' ? t('departments.title') : 'Departments'; if(typeof locals.user != 'undefined') { %>
+          <li class="nav-item">
+            <% if(locals.title == deptTitle) { %>
+            <a href="/departments" class="nav-link active">
+            <% } else { %>
+            <a href="/departments" class="nav-link">
+            <% } %>
+              <i class="nav-icon fas fa-building"></i>
+              <p><%= typeof t !== 'undefined' ? t('nav.departments') : 'Departments' %></p>
+            </a>
+          </li>
+          <% } %>
           <% const usersTitle = typeof t !== 'undefined' ? t('users.title') : 'Manage Users'; if(typeof locals.user != 'undefined') { %>
           <li class="nav-item">
             <% if(locals.title == usersTitle) { %>
@@ -154,6 +259,21 @@
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
+      <div class="sidebar-footer">
+        <a href="/account" class="nav-link d-flex align-items-center">
+          <i class="fas fa-cog mr-2"></i>
+          <span><%= typeof t !== 'undefined' ? t('nav.settings') : 'Settings' %></span>
+        </a>
+        <div class="user-block">
+          <span class="avatar-circle avatar-circle-sm">
+            <%= (navUser || 'U').toString().charAt(0).toUpperCase() %>
+          </span>
+          <div class="user-info">
+            <span class="user-name"><%= (navUser && navUser !== 'U') ? navUser : (typeof locals.user != 'undefined' ? (typeof t !== 'undefined' ? t('nav.superAdmin') : 'Admin') : (typeof t !== 'undefined' ? t('nav.user') : 'User')) %></span>
+            <span class="user-role"><%= typeof locals.user != 'undefined' ? (typeof t !== 'undefined' ? t('nav.superAdmin') : 'Admin') : (typeof t !== 'undefined' ? t('nav.user') : 'User') %></span>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- /.sidebar -->
   </aside>

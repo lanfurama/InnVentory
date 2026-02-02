@@ -1,0 +1,89 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('reports.assetsListing') : 'Assets Listing' %></h1>
+          </div>
+          <div class="col-sm-6">
+            <div id="bt" class="float-sm-right"></div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><%= typeof t !== 'undefined' ? t('reports.filters') : 'Filters' %></h3>
+          </div>
+          <div class="card-body">
+            <form method="get" action="/reports/assets-listing" class="form-inline flex-wrap">
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('asset.department') : 'Department' %></label>
+                <select name="department_id" class="form-control">
+                  <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                  <% (departments || []).forEach(d => { %>
+                  <option value="<%= d.id %>" <%= filters && filters.department_id == d.id ? 'selected' : '' %>><%= d.name %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('asset.category') : 'Category' %></label>
+                <select name="category_id" class="form-control">
+                  <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                  <% (categories || []).forEach(c => { %>
+                  <option value="<%= c.id %>" <%= filters && filters.category_id == c.id ? 'selected' : '' %>><%= c.name %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group mr-2 mb-2">
+                <label class="mr-1"><%= typeof t !== 'undefined' ? t('asset.status') : 'Status' %></label>
+                <select name="status" class="form-control">
+                  <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                  <option value="active" <%= filters && filters.status === 'active' ? 'selected' : '' %>><%= typeof t !== 'undefined' ? t('asset.statusActive') : 'Active' %></option>
+                  <option value="maintenance" <%= filters && filters.status === 'maintenance' ? 'selected' : '' %>><%= typeof t !== 'undefined' ? t('asset.statusMaintenance') : 'Maintenance' %></option>
+                  <option value="disposed" <%= filters && filters.status === 'disposed' ? 'selected' : '' %>><%= typeof t !== 'undefined' ? t('asset.statusDisposed') : 'Disposed' %></option>
+                </select>
+              </div>
+              <div class="form-group mb-2">
+                <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('reports.apply') : 'Apply' %></button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <table id="assetsListingTable" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.assetCode') : 'Code' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.name') : 'Name' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.category') : 'Category' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.department') : 'Department' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.purchasePrice') : 'Purchase Price' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.acquisitionDate') : 'Acquisition Date' %></th>
+                  <th><%= typeof t !== 'undefined' ? t('asset.status') : 'Status' %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% (assets || []).forEach((el, i) => { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= el.asset_code %></td>
+                  <td><%= el.name %></td>
+                  <td><%= el.category_name || '-' %></td>
+                  <td><%= el.department_name || '-' %></td>
+                  <td><%= el.purchase_price ? Number(el.purchase_price).toLocaleString() : '-' %></td>
+                  <td><%= el.acquisition_date ? el.acquisition_date.toString().slice(0, 10) : '-' %></td>
+                  <td><%= el.status || '-' %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<%- include('../partials/footer') %>

@@ -15,9 +15,13 @@ const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const accountRoutes = require('./routes/accountRoutes');
-const stockRoutes = require('./routes/stockRoutes');
-const stockInRoutes = require('./routes/stockInRoutes');
-const stockOutRoutes = require('./routes/stockOutRoutes');
+const assetRoutes = require('./routes/assetRoutes');
+const assetCategoryRoutes = require('./routes/assetCategoryRoutes');
+const departmentRoutes = require('./routes/departmentRoutes');
+const assetTransferRoutes = require('./routes/assetTransferRoutes');
+const assetMaintenanceRoutes = require('./routes/assetMaintenanceRoutes');
+const depreciationRoutes = require('./routes/depreciationRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 const logRoutes = require('./routes/logRoutes');
 
 const app = express();
@@ -110,9 +114,13 @@ app.use(authRoutes);
 app.use(dashboardRoutes);
 app.use(usersRoutes);
 app.use(accountRoutes);
-app.use(stockRoutes);
-app.use(stockInRoutes);
-app.use(stockOutRoutes);
+app.use(assetRoutes);
+app.use(assetCategoryRoutes);
+app.use(departmentRoutes);
+app.use(assetTransferRoutes);
+app.use(assetMaintenanceRoutes);
+app.use(depreciationRoutes);
+app.use(reportRoutes);
 app.use(logRoutes);
 
 app.get('/lang/:lng', (req, res) => {

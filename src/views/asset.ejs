@@ -1,0 +1,410 @@
+<%- include('./partials/header') %> 
+<%- include('./partials/nav') %> 
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('asset.assetInventory') : 'Asset Inventory' %></h1>
+          <div class="page-header-actions">
+            <div class="search-bar-rounded">
+              <div class="input-group">
+                <input type="text" id="assetsTableSearch" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('asset.searchPlaceholder') : 'Search by asset, tag, or user...' %>" aria-label="Search">
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm"><i class="fas fa-filter mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.filter') : 'Filter' %></button>
+            <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm"><i class="fas fa-sort mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.sort') : 'Sort' %></button>
+            <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm" id="assetsExportBtn"><i class="fas fa-download mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.export') : 'Export' %></button>
+            <% if(typeof locals.user != 'undefined') { %>
+            <button type="button" class="btn btn-primary btn-primary-rounded btn-sm" data-toggle="modal" data-target="#add"><i class="fas fa-plus mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.addNewAsset') : 'Add New Asset' %></button>
+            <% } %>
+            <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>"><i class="fas fa-bell"></i></a>
+            <a class="nav-link d-inline-block" href="#" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
+          </div>
+        </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <% if(typeof errors != 'undefined') { %>
+        <% errors.forEach(error => { %>
+        <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= error.msg %>
+        </div>
+        <% }) %>
+        <% } %>
+
+        <!-- Summary Cards -->
+        <div class="dashboard-metrics-row mb-4">
+          <div class="metric-card">
+            <div class="metric-icon bg-blue">
+              <i class="fas fa-th-large"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('asset.totalAssets') : 'Total Assets' %></div>
+              <div class="metric-value"><%= typeof totalAssets !== 'undefined' ? totalAssets : (assets || []).length %></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-green">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('asset.currentlyInUse') : 'Currently In Use' %></div>
+              <div class="metric-value"><%= typeof inUseCount !== 'undefined' ? inUseCount : 0 %></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-orange">
+              <i class="fas fa-wrench"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label"><%= typeof t !== 'undefined' ? t('asset.underRepair') : 'Under Repair' %></div>
+              <div class="metric-value"><%= typeof underRepairCount !== 'undefined' ? underRepairCount : 0 %></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('asset.tableTitle') : 'Assets' %></h3>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="assetsTable" class="table table-bordered table-hover mb-0 enhanced-table">
+                  <thead>
+                    <tr>
+                      <th>ASSET ID</th>
+                      <th>ASSET NAME</th>
+                      <th><%= typeof t !== 'undefined' ? t('asset.category') : 'CATEGORY' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('asset.location') : 'LOCATION' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('asset.assignee') : 'ASSIGNEE' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('asset.status') : 'STATUS' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('common.action') : 'Action' %></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% (assets || []).forEach((element)=> { %>
+                    <tr>
+                      <td><a href="/assets/<%= element.id %>" class="asset-tag-link"><%= element.asset_code %></a></td>
+                      <td>
+                        <div class="asset-name-cell">
+                          <% if(element.image) { %>
+                          <img src="/uploads/<%= element.image %>" class="asset-thumb rounded" alt="">
+                          <% } else { %>
+                          <span class="asset-thumb-placeholder rounded"><i class="fas fa-box"></i></span>
+                          <% } %>
+                          <span class="asset-name-text"><%= element.name %></span>
+                        </div>
+                      </td>
+                      <td><%= element.category_name || '-' %></td>
+                      <td><%= element.location || element.department_name || '-' %></td>
+                      <td>
+                        <% if(element.custodian) { %>
+                        <span class="avatar-circle avatar-circle-sm mr-1"><%= (element.custodian || 'U').toString().charAt(0).toUpperCase() %></span>
+                        <%= element.custodian %>
+                        <% } else { %>
+                        <span class="text-muted"><%= typeof t !== 'undefined' ? t('asset.unassigned') : '– Unassigned –' %></span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <span class="status-badge status-<%= element.status === 'disposed' ? 'retired' : element.status === 'maintenance' ? 'in-repair' : element.status === 'transferred' ? 'transferred' : 'active' %>">
+                          <%= element.status === 'disposed' ? (typeof t !== 'undefined' ? t('asset.statusDisposed') : 'Retired') : element.status === 'maintenance' ? (typeof t !== 'undefined' ? t('asset.statusMaintenance') : 'Under Repair') : element.status === 'transferred' ? 'Transferred' : (typeof t !== 'undefined' ? t('asset.statusActive') : 'In Use') %>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <a class="btn btn-sm btn-outline-primary" href="/assets/<%= element.id %>" title="<%= typeof t !== 'undefined' ? t('common.view') : 'View' %>"><i class="fas fa-eye"></i></a>
+                          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-right">
+                            <% if(typeof locals.user != 'undefined') { %>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit<%= element.id %>"><i class="fas fa-edit mr-2"></i><%= typeof t !== 'undefined' ? t('asset.editAsset') : 'Edit' %></a>
+                            <% if(element.status !== 'disposed') { %>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#dispose<%= element.id %>"><i class="fas fa-minus-circle mr-2"></i><%= typeof t !== 'undefined' ? t('asset.dispose') : 'Dispose' %></a>
+                            <% } %>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#delete<%= element.id %>"><i class="fas fa-trash-alt mr-2"></i><%= typeof t !== 'undefined' ? t('asset.deleteAsset') : 'Delete' %></a>
+                            <% } %>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#printqr<%= element.id %>"><i class="fas fa-qrcode mr-2"></i><%= typeof t !== 'undefined' ? t('asset.printQR') : 'Print QR' %></a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="edit<%= element.id %>">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('asset.editAsset') : 'Edit Asset' %></h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <form action="/assets/<%= element.id %>?_method=put" method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                              <input type="hidden" name="old_asset_code" value="<%= element.asset_code %>"/>
+                              <input type="hidden" name="existing_image" value="<%= element.image || '' %>"/>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.assetCode') : 'Asset Code' %></label>
+                                    <input type="text" name="asset_code" class="form-control" required value="<%= element.asset_code %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.name') : 'Name' %></label>
+                                    <input type="text" name="name" class="form-control" required value="<%= element.name %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.serialNumber') : 'Serial Number' %></label>
+                                    <input type="text" name="serial_number" class="form-control" value="<%= element.serial_number || '' %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.category') : 'Category' %></label>
+                                    <select name="category_id" class="form-control">
+                                      <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                                      <% (categories || []).forEach(c => { %>
+                                      <option value="<%= c.id %>" <%= element.category_id == c.id ? 'selected' : '' %>><%= c.name %> (<%= c.code %>)</option>
+                                      <% }) %>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.purchasePrice') : 'Purchase Price' %></label>
+                                    <input type="number" name="purchase_price" class="form-control" step="0.01" min="0" value="<%= element.purchase_price || '' %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.acquisitionDate') : 'Acquisition Date' %></label>
+                                    <input type="date" name="acquisition_date" class="form-control" value="<%= element.acquisition_date ? element.acquisition_date.toString().slice(0,10) : '' %>" />
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.department') : 'Department' %></label>
+                                    <select name="department_id" class="form-control">
+                                      <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                                      <% (departments || []).forEach(d => { %>
+                                      <option value="<%= d.id %>" <%= element.department_id == d.id ? 'selected' : '' %>><%= d.name %> (<%= d.code %>)</option>
+                                      <% }) %>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.custodian') : 'Custodian' %></label>
+                                    <input type="text" name="custodian" class="form-control" value="<%= element.custodian || '' %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.location') : 'Location' %></label>
+                                    <input type="text" name="location" class="form-control" value="<%= element.location || '' %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.warrantyExpiry') : 'Warranty Expiry' %></label>
+                                    <input type="date" name="warranty_expiry" class="form-control" value="<%= element.warranty_expiry ? element.warranty_expiry.toString().slice(0,10) : '' %>" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('asset.status') : 'Status' %></label>
+                                    <select name="status" class="form-control">
+                                      <option value="active" <%= element.status === 'active' ? 'selected' : '' %>><%= typeof t !== 'undefined' ? t('asset.statusActive') : 'Active' %></option>
+                                      <option value="maintenance" <%= element.status === 'maintenance' ? 'selected' : '' %>><%= typeof t !== 'undefined' ? t('asset.statusMaintenance') : 'Maintenance' %></option>
+                                      <option value="disposed" <%= element.status === 'disposed' ? 'selected' : '' %>><%= typeof t !== 'undefined' ? t('asset.statusDisposed') : 'Disposed' %></option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label><%= typeof t !== 'undefined' ? t('common.image') : 'Image' %></label>
+                                    <input type="file" name="image" accept="image/png, image/jpeg" class="form-control-file" />
+                                    <small class="form-text text-muted"><%= typeof t !== 'undefined' ? t('common.maxSize') : 'Max: 1MB' %></small>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('asset.notes') : 'Notes' %></label>
+                                <textarea name="notes" class="form-control" rows="2"><%= element.notes || '' %></textarea>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="delete<%= element.id %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('asset.deleteAsset') : 'Delete Asset' %></h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <form action="/assets/delete/<%= element.id %>" method="post">
+                            <div class="modal-body">
+                              <%= typeof t !== 'undefined' ? t('asset.confirmDelete', { name: element.name }) : 'Are you sure you want to delete ' + element.name + '?' %>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.yes') : 'Yes' %></button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.cancel') : 'Cancel' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Dispose Modal -->
+                    <% if(element.status !== 'disposed') { %>
+                    <div class="modal fade" id="dispose<%= element.id %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('asset.disposeAsset') : 'Dispose Asset' %></h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <form action="/assets/dispose/<%= element.id %>" method="post">
+                            <div class="modal-body">
+                              <p><%= typeof t !== 'undefined' ? t('asset.disposeConfirm', { name: element.name }) : 'Dispose asset: ' + element.name %></p>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('asset.disposalDate') : 'Disposal Date' %></label>
+                                <input type="date" name="disposal_date" class="form-control" required />
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('asset.disposalReason') : 'Reason' %></label>
+                                <textarea name="disposal_reason" class="form-control" rows="2"></textarea>
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('asset.disposalValue') : 'Disposal Value' %></label>
+                                <input type="number" name="disposal_value" class="form-control" step="0.01" min="0" />
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('asset.dispose') : 'Dispose' %></button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Print QR Modal -->
+                    <div class="modal fade" id="printqr<%= element.id %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('asset.printQR') : 'Print QR Code' %></h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="d-flex justify-content-center mb-2"><b><%= element.asset_code %> - <%= element.name %></b></div>
+                            <div class="d-flex justify-content-center mb-3">
+                              <img src="/uploads/<%= element.asset_code %>.png" alt="QR" onerror="this.style.display='none'">
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="window.print();"><%= typeof t !== 'undefined' ? t('common.print') : 'Print' %></button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Modal -->
+    <% if(typeof locals.user != 'undefined') { %>
+    <div class="modal fade" id="add">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('asset.addAsset') : 'Add Asset' %></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <form action="/assets" method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.assetCode') : 'Asset Code' %></label>
+                    <input type="text" name="asset_code" class="form-control" required value="<%= formData && formData.asset_code ? formData.asset_code : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.name') : 'Name' %></label>
+                    <input type="text" name="name" class="form-control" required value="<%= formData && formData.name ? formData.name : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.serialNumber') : 'Serial Number' %></label>
+                    <input type="text" name="serial_number" class="form-control" value="<%= formData && formData.serial_number ? formData.serial_number : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.category') : 'Category' %></label>
+                    <select name="category_id" class="form-control">
+                      <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                      <% (categories || []).forEach(c => { %>
+                      <option value="<%= c.id %>" <%= formData && formData.category_id == c.id ? 'selected' : '' %>><%= c.name %> (<%= c.code %>)</option>
+                      <% }) %>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.purchasePrice') : 'Purchase Price' %></label>
+                    <input type="number" name="purchase_price" class="form-control" step="0.01" min="0" value="<%= formData && formData.purchase_price ? formData.purchase_price : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.acquisitionDate') : 'Acquisition Date' %></label>
+                    <input type="date" name="acquisition_date" class="form-control" value="<%= formData && formData.acquisition_date ? formData.acquisition_date : '' %>" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.department') : 'Department' %></label>
+                    <select name="department_id" class="form-control">
+                      <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
+                      <% (departments || []).forEach(d => { %>
+                      <option value="<%= d.id %>" <%= formData && formData.department_id == d.id ? 'selected' : '' %>><%= d.name %> (<%= d.code %>)</option>
+                      <% }) %>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.custodian') : 'Custodian' %></label>
+                    <input type="text" name="custodian" class="form-control" value="<%= formData && formData.custodian ? formData.custodian : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.location') : 'Location' %></label>
+                    <input type="text" name="location" class="form-control" value="<%= formData && formData.location ? formData.location : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('asset.warrantyExpiry') : 'Warranty Expiry' %></label>
+                    <input type="date" name="warranty_expiry" class="form-control" value="<%= formData && formData.warranty_expiry ? formData.warranty_expiry : '' %>" />
+                  </div>
+                  <div class="form-group">
+                    <label><%= typeof t !== 'undefined' ? t('common.image') : 'Image' %></label>
+                    <input type="file" name="image" accept="image/png, image/jpeg" class="form-control-file" />
+                    <small class="form-text text-muted"><%= typeof t !== 'undefined' ? t('common.maxSize') : 'Max: 1MB' %></small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('asset.notes') : 'Notes' %></label>
+                <textarea name="notes" class="form-control" rows="2"><%= formData && formData.notes ? formData.notes : '' %></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+<%- include('./partials/footer') %> 

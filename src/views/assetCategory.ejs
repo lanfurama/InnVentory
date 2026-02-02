@@ -1,0 +1,182 @@
+<%- include('./partials/header') %> 
+<%- include('./partials/nav') %> 
+          <div class="col-sm-6">
+            <h1><%= typeof t !== 'undefined' ? t('assetCategory.title') : 'Asset Categories' %></h1>
+          </div>
+          <div class="col-sm-6">
+            <div id="bt" class="float-sm-right">
+              <% if(typeof locals.user != 'undefined') { %>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+                <i class="fas fa-plus"></i>
+                <%= typeof t !== 'undefined' ? t('assetCategory.add') : 'Add Category' %>
+              </button>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <% if(typeof errors != 'undefined') { %>
+            <% errors.forEach(error => { %> 
+            <div class="alert alert-danger alert-dismissible">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <%= error.msg %> 
+            </div>
+            <% }) %> 
+            <% } %> 
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('assetCategory.tableTitle') : 'Asset Categories' %></h3>
+              </div>
+              <div class="card-body">
+                <table id="categoriesTable" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th><%= typeof t !== 'undefined' ? t('assetCategory.name') : 'Name' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('assetCategory.code') : 'Code' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('assetCategory.usefulLifeYears') : 'Useful Life (years)' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('assetCategory.residualValue') : 'Residual Value' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('assetCategory.depreciationMethod') : 'Depreciation Method' %></th>
+                      <% if(typeof locals.user != 'undefined') { %>
+                      <th><%= typeof t !== 'undefined' ? t('common.action') : 'Action' %></th>
+                      <% } %>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% (categories || []).forEach((el, i)=> { %>
+                    <tr>
+                      <td><%= i+1 %></td>
+                      <td><%= el.name %></td>
+                      <td><%= el.code %></td>
+                      <td><%= el.useful_life_years || '-' %></td>
+                      <td><%= el.residual_value != null ? Number(el.residual_value).toLocaleString() : '-' %></td>
+                      <td><%= el.depreciation_method === 'straight_line' ? 'Straight Line' : 'Declining Balance' %></td>
+                      <% if(typeof locals.user != 'undefined') { %>
+                      <td>
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit<%= el.id %>"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete<%= el.id %>"><i class="fas fa-trash-alt"></i></button>
+                      </td>
+                      <% } %>
+                    </tr>
+                    <div class="modal fade" id="edit<%= el.id %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('assetCategory.edit') : 'Edit Category' %></h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <form action="/asset-categories?_method=put" method="post">
+                            <div class="modal-body">
+                              <input type="hidden" name="id" value="<%= el.id %>"/>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('assetCategory.name') : 'Name' %></label>
+                                <input type="text" name="name" class="form-control" required value="<%= el.name %>" />
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('assetCategory.code') : 'Code' %></label>
+                                <input type="text" name="code" class="form-control" required value="<%= el.code %>" />
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('assetCategory.usefulLifeYears') : 'Useful Life (years)' %></label>
+                                <input type="number" name="useful_life_years" class="form-control" min="1" value="<%= el.useful_life_years || 5 %>" />
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('assetCategory.residualValue') : 'Residual Value' %></label>
+                                <input type="number" name="residual_value" class="form-control" step="0.01" min="0" value="<%= el.residual_value != null ? el.residual_value : 0 %>" />
+                              </div>
+                              <div class="form-group">
+                                <label><%= typeof t !== 'undefined' ? t('assetCategory.depreciationMethod') : 'Depreciation Method' %></label>
+                                <select name="depreciation_method" class="form-control">
+                                  <option value="straight_line" <%= el.depreciation_method === 'straight_line' ? 'selected' : '' %>>Straight Line</option>
+                                  <option value="declining_balance" <%= el.depreciation_method === 'declining_balance' ? 'selected' : '' %>>Declining Balance</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="delete<%= el.id %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('assetCategory.delete') : 'Delete Category' %></h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <form action="/asset-categories/delete/<%= el.id %>" method="post">
+                            <div class="modal-body">
+                              <%= typeof t !== 'undefined' ? t('assetCategory.confirmDelete', { name: el.name }) : 'Are you sure you want to delete ' + el.name + '?' %>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.yes') : 'Yes' %></button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.cancel') : 'Cancel' %></button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <% if(typeof locals.user != 'undefined') { %>
+    <div class="modal fade" id="add">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title"><%= typeof t !== 'undefined' ? t('assetCategory.add') : 'Add Category' %></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <form action="/asset-categories" method="post">
+            <div class="modal-body">
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('assetCategory.name') : 'Name' %></label>
+                <input type="text" name="name" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('assetCategory.code') : 'Code' %></label>
+                <input type="text" name="code" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('assetCategory.usefulLifeYears') : 'Useful Life (years)' %></label>
+                <input type="number" name="useful_life_years" class="form-control" min="1" value="5" />
+              </div>
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('assetCategory.residualValue') : 'Residual Value' %></label>
+                <input type="number" name="residual_value" class="form-control" step="0.01" min="0" value="0" />
+              </div>
+              <div class="form-group">
+                <label><%= typeof t !== 'undefined' ? t('assetCategory.depreciationMethod') : 'Depreciation Method' %></label>
+                <select name="depreciation_method" class="form-control">
+                  <option value="straight_line">Straight Line</option>
+                  <option value="declining_balance">Declining Balance</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('common.save') : 'Save' %></button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= typeof t !== 'undefined' ? t('common.close') : 'Close' %></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+<%- include('./partials/footer') %> 

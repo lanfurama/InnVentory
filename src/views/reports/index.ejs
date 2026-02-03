@@ -1,12 +1,10 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb breadcrumb-modern">
-            <li class="breadcrumb-item"><a href="/"><%= typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home' %></a></li>
-            <li class="breadcrumb-item"><a href="/reports"><%= typeof t !== 'undefined' ? t('breadcrumb.financials') : 'Financials' %></a></li>
-            <li class="breadcrumb-item active" aria-current="page"><%= typeof t !== 'undefined' ? t('breadcrumb.reportingAnalytics') : 'Reporting & Analytics' %></li>
-          </ol>
-        </nav>
+        <%- include('../partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.financials') : 'Financials', url: '/reports' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.reportingAnalytics') : 'Reporting & Analytics' }
+        ] }) %>
         <div class="page-header-flex">
           <div>
             <h1 class="page-title"><%= typeof t !== 'undefined' ? t('reports.overview') : 'Financial Reporting & Analytics' %></h1>

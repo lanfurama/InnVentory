@@ -20,7 +20,8 @@ $(() => {
       },
     ],
     initComplete() {
-      $('.buttons-print').html('<i class="fas fa-print"></i> Cetak ');
+      const printLabel = (typeof window.__localeStrings !== 'undefined' && window.__localeStrings.print) ? window.__localeStrings.print : 'Print';
+      $('.buttons-print').html('<i class="fas fa-print"></i> ' + printLabel + ' ');
     },
   };
 
@@ -53,6 +54,9 @@ $(() => {
   }
   if ($('#departmentsTable').length) {
     $('#departmentsTable').DataTable({ responsive: true, autoWidth: false });
+  }
+  if ($('#departmentAssetsTable').length) {
+    $('#departmentAssetsTable').DataTable({ responsive: true, autoWidth: false });
   }
   if ($('#categoriesTable').length) {
     $('#categoriesTable').DataTable({ responsive: true, autoWidth: false });

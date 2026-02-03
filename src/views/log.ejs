@@ -1,8 +1,13 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('log.title') : 'App Log' %></h1>
-          </div>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.management') : 'Management', url: '#' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.appLog') : 'App Log' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('log.title') : 'App Log' %></h1>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -14,11 +19,11 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('log.tableTitle') : 'App Log Table' %></h3>
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('log.tableTitle') : 'App Log Table' %></h3>
               </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="log" class="table table-bordered table-striped">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="log" class="table table-bordered table-hover mb-0">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -30,6 +35,14 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!log || log.length === 0) { %>
+                    <tr>
+                      <td colspan="6" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.log') : 'No log entries' %></p>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% log.forEach((element, index)=> { %>
                     <tr>
                       <td><%= index+1%></td>
@@ -40,10 +53,11 @@
                       <td><%= element.status_code %></td>
                     </tr>
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
+                </div>
               </div>
-              <!-- /.card-body -->
             </div>
             <!-- /.card -->
           </div>

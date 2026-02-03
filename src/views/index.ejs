@@ -1,7 +1,10 @@
 <%- include('./partials/header') %>
 <%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.dashboard') : 'Dashboard' }
+        ] }) %>
         <div class="page-header-flex">
-          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('dashboard.title') : 'Dashboard' %> Overview</h1>
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('dashboard.title') : 'Dashboard' %></h1>
           <div class="page-header-actions">
             <div class="search-bar-rounded">
               <div class="input-group">
@@ -62,6 +65,7 @@
               <div class="metric-trend negative">
                 <%= typeof t !== 'undefined' ? t('dashboard.actionRequired') : 'Action Req' %>
               </div>
+              <a href="/assets" class="small text-muted"><%= typeof t !== 'undefined' ? t('common.view') : 'View' %></a>
             </div>
           </div>
           <div class="metric-card">

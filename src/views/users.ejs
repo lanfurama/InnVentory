@@ -1,18 +1,21 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('users.title') : 'Manage Users' %></h1>
-          </div>
-          <div class="col-sm-6">
-            <div id="bt" class="float-sm-right">
-              <div class="dt-buttons btn-group flex-wrap">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
-                  <i class="fas fa-plus"></i>
-                  <%= typeof t !== 'undefined' ? t('users.addUser') : 'Add User' %>
-                </button>
-              </div>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.management') : 'Management', url: '#' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.users') : 'Users' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('users.title') : 'Manage Users' %></h1>
+          <div class="page-header-actions" id="bt">
+            <div class="dt-buttons btn-group flex-wrap">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+                <i class="fas fa-plus"></i>
+                <%= typeof t !== 'undefined' ? t('users.addUser') : 'Add User' %>
+              </button>
             </div>
           </div>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -42,11 +45,11 @@
             <% } %> 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('users.tableTitle') : 'Users Table' %></h3>
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('users.tableTitle') : 'Users Table' %></h3>
               </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="user" class="table table-bordered table-striped">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="user" class="table table-bordered table-hover mb-0">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -56,6 +59,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!usr || usr.length === 0) { %>
+                    <tr>
+                      <td colspan="4" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.users') : 'No users yet' %></p>
+                        <% if(typeof locals.user != 'undefined') { %><a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstUser') : 'Add first user' %></a><% } %>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% usr.forEach((element, index)=> { %>
                     <tr>
                       <td><%= index+1%></td>
@@ -159,10 +171,11 @@
                     </div>
 
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
+                </div>
               </div>
-              <!-- /.card-body -->
             </div>
             <!-- /.card -->
           </div>

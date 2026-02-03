@@ -4,12 +4,25 @@ const assetQuery = require('../queries/assetQuery');
 const departmentQuery = require('../queries/departmentQuery');
 
 const getTransfers = async (req, res) => {
+  const fromDeptId = req.query.from_dept_id ? parseInt(req.query.from_dept_id, 10) : null;
+  const selectedAssetId = req.query.asset_id ? parseInt(req.query.asset_id, 10) : null;
+
   const [transfers, assets, departments] = await Promise.all([
     assetTransferQuery.getAll(),
-    assetQuery.getAll(),
+    fromDeptId
+      ? assetQuery.getByDepartmentId(fromDeptId)
+      : assetQuery.getAll(),
     departmentQuery.getAll(),
   ]);
-  res.render('assetTransfer', { title: req.t('assetTransfer.title'), transfers, assets, departments });
+
+  res.render('assetTransfer', {
+    title: req.t('assetTransfer.title'),
+    transfers,
+    assets,
+    departments,
+    selectedFromDeptId: fromDeptId || null,
+    selectedAssetId: selectedAssetId || null,
+  });
 };
 
 const addTransfer = [
@@ -18,15 +31,20 @@ const addTransfer = [
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const transfers = await assetTransferQuery.getAll();
-      const assets = await assetQuery.getAll();
-      const departments = await departmentQuery.getAll();
+      const fromDeptId = req.body.from_dept_id ? parseInt(req.body.from_dept_id, 10) : null;
+      const [transfers, assets, departments] = await Promise.all([
+        assetTransferQuery.getAll(),
+        fromDeptId ? assetQuery.getByDepartmentId(fromDeptId) : assetQuery.getAll(),
+        departmentQuery.getAll(),
+      ]);
       return res.render('assetTransfer', {
         title: req.t('assetTransfer.title'),
         errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) || e.msg })),
         transfers,
         assets,
         departments,
+        selectedFromDeptId: fromDeptId || null,
+        selectedAssetId: null,
       });
     }
     const asset = await assetQuery.getById(req.body.asset_id);

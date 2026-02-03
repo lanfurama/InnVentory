@@ -1,16 +1,19 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('assetMaintenance.title') : 'Asset Maintenance' %></h1>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.assets') : 'Assets', url: '/assets' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.maintenance') : 'Maintenance' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('assetMaintenance.title') : 'Asset Maintenance' %></h1>
+          <div class="page-header-actions" id="bt">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+              <i class="fas fa-plus"></i>
+              <%= typeof t !== 'undefined' ? t('assetMaintenance.add') : 'Add Maintenance' %>
+            </button>
           </div>
-          <div class="col-sm-6">
-            <div id="bt" class="float-sm-right">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
-                <i class="fas fa-plus"></i>
-                <%= typeof t !== 'undefined' ? t('assetMaintenance.add') : 'Add Maintenance' %>
-              </button>
-            </div>
-          </div>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -29,10 +32,11 @@
             <% } %> 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('assetMaintenance.tableTitle') : 'Maintenance Records' %></h3>
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('assetMaintenance.tableTitle') : 'Maintenance Records' %></h3>
               </div>
-              <div class="card-body">
-                <table id="maintenanceTable" class="table table-bordered table-striped">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="maintenanceTable" class="table table-bordered table-hover mb-0">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -47,6 +51,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!maintenanceList || maintenanceList.length === 0) { %>
+                    <tr>
+                      <td colspan="<%= typeof locals.user != 'undefined' ? 8 : 7 %>" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.maintenance') : 'No maintenance records yet' %></p>
+                        <a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstMaintenance') : 'Add first maintenance' %></a>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% (maintenanceList || []).forEach((el, i)=> { %>
                     <tr>
                       <td><%= i+1 %></td>
@@ -112,8 +125,10 @@
                       </div>
                     </div>
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>

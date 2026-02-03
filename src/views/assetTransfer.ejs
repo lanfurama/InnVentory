@@ -1,16 +1,29 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('assetTransfer.title') : 'Asset Transfers' %></h1>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.assets') : 'Assets', url: '/assets' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.transfers') : 'Transfers' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('assetTransfer.title') : 'Asset Transfers' %></h1>
+          <div class="page-header-actions" id="bt">
+            <form method="get" action="/asset-transfers" class="form-inline d-inline-block mr-2" id="fromDeptFilterForm">
+              <label class="mr-2 mb-0"><%= typeof t !== 'undefined' ? t('assetTransfer.fromDept') : 'From department' %></label>
+              <select name="from_dept_id" class="form-control form-control-sm" onchange="document.getElementById('fromDeptFilterForm').submit();" aria-describedby="fromDeptHint">
+                <option value=""><%= typeof t !== 'undefined' ? t('assetTransfer.allDepartments') : 'All departments' %></option>
+                <% (departments || []).forEach(d => { %>
+                <option value="<%= d.id %>" <%= (typeof selectedFromDeptId !== 'undefined' && selectedFromDeptId == d.id) ? 'selected' : '' %>><%= d.name %> (<%= d.code %>)</option>
+                <% }) %>
+              </select>
+              <small id="fromDeptHint" class="text-muted ml-2 d-none d-md-inline"><%= typeof t !== 'undefined' ? t('assetTransfer.fromDeptHint') : 'Select a department to show only its assets in the transfer form.' %></small>
+            </form>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+              <i class="fas fa-plus"></i>
+              <%= typeof t !== 'undefined' ? t('assetTransfer.add') : 'Add Transfer' %>
+            </button>
           </div>
-          <div class="col-sm-6">
-            <div id="bt" class="float-sm-right">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
-                <i class="fas fa-plus"></i>
-                <%= typeof t !== 'undefined' ? t('assetTransfer.add') : 'Add Transfer' %>
-              </button>
-            </div>
-          </div>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -29,10 +42,11 @@
             <% } %> 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('assetTransfer.tableTitle') : 'Transfer History' %></h3>
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('assetTransfer.tableTitle') : 'Transfer History' %></h3>
               </div>
-              <div class="card-body">
-                <table id="transfersTable" class="table table-bordered table-striped">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="transfersTable" class="table table-bordered table-hover mb-0">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -48,6 +62,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!transfers || transfers.length === 0) { %>
+                    <tr>
+                      <td colspan="<%= typeof locals.user != 'undefined' ? 8 : 7 %>" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.transfers') : 'No transfers yet' %></p>
+                        <a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstTransfer') : 'Add first transfer' %></a>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% (transfers || []).forEach((el, i)=> { %>
                     <tr>
                       <td><%= i+1 %></td>
@@ -83,8 +106,10 @@
                       </div>
                     </div>
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>
@@ -100,13 +125,14 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
           <form action="/asset-transfers" method="post">
+            <input type="hidden" name="from_dept_id" value="<%= typeof selectedFromDeptId !== 'undefined' && selectedFromDeptId ? selectedFromDeptId : '' %>">
             <div class="modal-body">
               <div class="form-group">
                 <label><%= typeof t !== 'undefined' ? t('assetTransfer.asset') : 'Asset' %></label>
                 <select name="asset_id" class="form-control" required>
                   <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
                   <% (assets || []).forEach(a => { %>
-                  <option value="<%= a.id %>"><%= a.asset_code %> - <%= a.name %></option>
+                  <option value="<%= a.id %>" <%= (typeof selectedAssetId !== 'undefined' && selectedAssetId == a.id) ? 'selected' : '' %>><%= a.asset_code %> - <%= a.name %></option>
                   <% }) %>
                 </select>
               </div>
@@ -133,4 +159,11 @@
       </div>
     </div>
 
-<%- include('./partials/footer') %> 
+<%- include('./partials/footer') %>
+<% if (typeof selectedAssetId !== 'undefined' && selectedAssetId) { %>
+<script>
+  $(function () {
+    $('#add').modal('show');
+  });
+</script>
+<% } %>

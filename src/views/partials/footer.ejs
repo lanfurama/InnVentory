@@ -64,6 +64,11 @@
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/printQR.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
 <!-- Select2 script -->
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/select2.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
+<!-- Locale strings for DataTables (print button etc.) -->
+<script>
+  window.__localeStrings = window.__localeStrings || {};
+  window.__localeStrings.print = '<%= typeof t !== "undefined" ? String(t("common.print")).replace(/'/g, "\\'") : "Print" %>';
+</script>
 <!-- DataTables script -->
 <script src="<%= typeof baseUrl !== 'undefined' ? baseUrl : '' %>/js/datatables.js?v=<%= typeof v !== 'undefined' ? v : '' %>"></script>
 <!-- Page specific script -->

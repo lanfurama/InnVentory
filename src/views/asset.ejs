@@ -1,5 +1,9 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.assets') : 'Assets' }
+        ] }) %>
         <div class="page-header-flex">
           <h1 class="page-title"><%= typeof t !== 'undefined' ? t('asset.assetInventory') : 'Asset Inventory' %></h1>
           <div class="page-header-actions">
@@ -11,8 +15,6 @@
                 </div>
               </div>
             </div>
-            <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm"><i class="fas fa-filter mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.filter') : 'Filter' %></button>
-            <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm"><i class="fas fa-sort mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.sort') : 'Sort' %></button>
             <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm" id="assetsExportBtn"><i class="fas fa-download mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.export') : 'Export' %></button>
             <% if(typeof locals.user != 'undefined') { %>
             <button type="button" class="btn btn-outline-secondary btn-outline-secondary-rounded btn-sm" data-toggle="modal" data-target="#importExcel"><i class="fas fa-file-excel mr-1"></i> <%= typeof t !== 'undefined' ? t('asset.import') : 'Import Excel' %></button>
@@ -102,6 +104,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!assets || assets.length === 0) { %>
+                    <tr>
+                      <td colspan="8" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.assets') : 'No assets yet' %></p>
+                        <% if(typeof locals.user != 'undefined') { %><a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstAsset') : 'Add first asset' %></a><% } %>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% (assets || []).forEach((element)=> { %>
                     <tr>
                       <td><a href="/assets/<%= element.id %>" class="asset-tag-link"><%= element.asset_code %></a></td>
@@ -326,6 +337,7 @@
                     </div>
 
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
               </div>

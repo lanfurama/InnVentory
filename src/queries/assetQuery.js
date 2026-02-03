@@ -12,6 +12,19 @@ const getAll = async () => {
   return result.rows;
 };
 
+const getByDepartmentId = async (departmentId) => {
+  const result = await pool.query(`
+    SELECT a.*, c.name as category_name, c.code as category_code,
+           d.name as department_name, d.code as department_code
+    FROM public.assets a
+    LEFT JOIN public.asset_categories c ON a.category_id = c.id
+    LEFT JOIN public.departments d ON a.department_id = d.id
+    WHERE a.department_id = $1 AND a.status != 'disposed'
+    ORDER BY a.asset_code
+  `, [departmentId]);
+  return result.rows;
+};
+
 const getById = async (id) => {
   const result = await pool.query(`
     SELECT a.*, c.name as category_name, c.code as category_code,
@@ -89,7 +102,7 @@ const getTotalValue = async () => {
 
 const getCountByDepartment = async () => {
   const result = await pool.query(`
-    SELECT d.name, d.code, COUNT(a.id) as count
+    SELECT d.id, d.name, d.code, COUNT(a.id) as count
     FROM public.departments d
     LEFT JOIN public.assets a ON a.department_id = d.id AND a.status != 'disposed'
     GROUP BY d.id, d.name, d.code
@@ -173,6 +186,7 @@ module.exports = {
   getAll,
   getById,
   getByAssetCode,
+  getByDepartmentId,
   add,
   update,
   remove,

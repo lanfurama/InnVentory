@@ -1,5 +1,10 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
+        <%- include('../partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.financials') : 'Financials', url: '/reports' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.transactionListing') : 'Transaction Listing' }
+        ] }) %>
           <div class="col-sm-6">
             <h1><%= typeof t !== 'undefined' ? t('reports.transactionListing') : 'Asset Transaction Listing' %></h1>
           </div>

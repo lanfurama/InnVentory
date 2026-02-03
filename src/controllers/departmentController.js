@@ -1,9 +1,19 @@
 const { body, validationResult } = require('express-validator');
 const departmentQuery = require('../queries/departmentQuery');
+const assetQuery = require('../queries/assetQuery');
 
 const getDepartments = async (req, res) => {
-  const departments = await departmentQuery.getAll();
-  res.render('departments', { title: req.t('departments.title'), departments });
+  const [departments, countByDepartment] = await Promise.all([
+    departmentQuery.getAll(),
+    assetQuery.getCountByDepartment(),
+  ]);
+  const countByDeptMap = {};
+  (countByDepartment || []).forEach((row) => { countByDeptMap[row.id] = parseInt(row.count, 10) || 0; });
+  res.render('departments', {
+    title: req.t('departments.title'),
+    departments,
+    countByDeptMap,
+  });
 };
 
 const addDepartment = [
@@ -17,11 +27,17 @@ const addDepartment = [
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const departments = await departmentQuery.getAll();
+      const [departments, countByDepartment] = await Promise.all([
+        departmentQuery.getAll(),
+        assetQuery.getCountByDepartment(),
+      ]);
+      const countByDeptMap = {};
+      (countByDepartment || []).forEach((row) => { countByDeptMap[row.id] = parseInt(row.count, 10) || 0; });
       return res.render('departments', {
         title: req.t('departments.title'),
         errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) || e.msg })),
         departments,
+        countByDeptMap,
       });
     }
     await departmentQuery.add(req.body.name, req.body.code);
@@ -40,11 +56,17 @@ const updateDepartment = [
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const departments = await departmentQuery.getAll();
+      const [departments, countByDepartment] = await Promise.all([
+        departmentQuery.getAll(),
+        assetQuery.getCountByDepartment(),
+      ]);
+      const countByDeptMap = {};
+      (countByDepartment || []).forEach((row) => { countByDeptMap[row.id] = parseInt(row.count, 10) || 0; });
       return res.render('departments', {
         title: req.t('departments.title'),
         errors: errors.array().map((e) => ({ ...e, msg: req.t(e.msg) || e.msg })),
         departments,
+        countByDeptMap,
       });
     }
     await departmentQuery.update(req.body.id, req.body.name, req.body.code);
@@ -57,8 +79,20 @@ const deleteDepartment = async (req, res) => {
   res.redirect('/departments');
 };
 
+const getDepartmentAssets = async (req, res) => {
+  const department = await departmentQuery.getById(req.params.id);
+  if (!department) return res.redirect('/departments');
+  const assets = await assetQuery.getByDepartmentId(req.params.id);
+  res.render('departmentAssets', {
+    title: req.t('departments.assetsOf') ? req.t('departments.assetsOf', { name: department.name }) : `Assets of ${department.name}`,
+    department,
+    assets,
+  });
+};
+
 module.exports = {
   getDepartments,
+  getDepartmentAssets,
   addDepartment,
   updateDepartment,
   deleteDepartment,

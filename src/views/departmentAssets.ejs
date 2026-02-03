@@ -1,0 +1,101 @@
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.departments') : 'Departments', url: '/departments' },
+          { label: department ? department.name : '', url: null },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.assets') : 'Assets' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' && t('departments.assetsOf') ? t('departments.assetsOf', { name: department.name }) : 'Assets of ' + (department ? department.name : '') %></h1>
+          <div class="page-header-actions">
+            <a href="/departments" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i><%= typeof t !== 'undefined' ? t('common.back') : 'Back' %></a>
+            <a href="/assets" class="btn btn-outline-primary btn-sm"><i class="fas fa-th-large mr-1"></i><%= typeof t !== 'undefined' ? t('nav.assets') : 'All Assets' %></a>
+          </div>
+        </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('asset.tableTitle') : 'Assets' %> (<%= (assets || []).length %>)</h3>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table id="departmentAssetsTable" class="table table-bordered table-hover mb-0 enhanced-table">
+                    <thead>
+                      <tr>
+                        <th>ASSET ID</th>
+                        <th>ASSET NAME</th>
+                        <th><%= typeof t !== 'undefined' ? t('asset.category') : 'CATEGORY' %></th>
+                        <th><%= typeof t !== 'undefined' ? t('asset.location') : 'LOCATION' %></th>
+                        <th><%= typeof t !== 'undefined' ? t('asset.assignee') : 'ASSIGNEE' %></th>
+                        <th><%= typeof t !== 'undefined' ? t('asset.status') : 'STATUS' %></th>
+                        <th><%= typeof t !== 'undefined' ? t('common.action') : 'Action' %></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (!assets || assets.length === 0) { %>
+                      <tr>
+                        <td colspan="7" class="text-center py-5">
+                          <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                          <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.assets') : 'No assets yet' %></p>
+                          <a href="/assets" class="btn btn-outline-primary btn-sm"><%= typeof t !== 'undefined' ? t('nav.assets') : 'All Assets' %></a>
+                        </td>
+                      </tr>
+                      <% } else { %>
+                      <% (assets || []).forEach((element)=> { %>
+                      <tr>
+                        <td><a href="/assets/<%= element.id %>" class="asset-tag-link"><%= element.asset_code %></a></td>
+                        <td>
+                          <div class="asset-name-cell">
+                            <% if(element.image) { %>
+                            <img src="/uploads/<%= element.image %>" class="asset-thumb rounded" alt="">
+                            <% } else { %>
+                            <span class="asset-thumb-placeholder rounded"><i class="fas fa-box"></i></span>
+                            <% } %>
+                            <span class="asset-name-text"><%= element.name %></span>
+                          </div>
+                        </td>
+                        <td><%= element.category_name || '-' %></td>
+                        <td><%= element.location || '-' %></td>
+                        <td>
+                          <% if(element.custodian) { %>
+                          <span class="avatar-circle avatar-circle-sm mr-1"><%= (element.custodian || 'U').toString().charAt(0).toUpperCase() %></span>
+                          <%= element.custodian %>
+                          <% } else { %>
+                          <span class="text-muted"><%= typeof t !== 'undefined' ? t('asset.unassigned') : '– Unassigned –' %></span>
+                          <% } %>
+                        </td>
+                        <td>
+                          <span class="status-badge status-<%= element.status === 'disposed' ? 'retired' : element.status === 'maintenance' ? 'in-repair' : element.status === 'transferred' ? 'transferred' : 'active' %>">
+                            <%= element.status === 'disposed' ? (typeof t !== 'undefined' ? t('asset.statusDisposed') : 'Retired') : element.status === 'maintenance' ? (typeof t !== 'undefined' ? t('asset.statusMaintenance') : 'Under Repair') : element.status === 'transferred' ? 'Transferred' : (typeof t !== 'undefined' ? t('asset.statusActive') : 'In Use') %>
+                          </span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <a class="btn btn-sm btn-outline-primary" href="/assets/<%= element.id %>" title="<%= typeof t !== 'undefined' ? t('common.view') : 'View' %>"><i class="fas fa-eye"></i></a>
+                            <% if(element.status !== 'disposed') { %>
+                            <a class="btn btn-sm btn-outline-secondary" href="/asset-transfers?from_dept_id=<%= department.id %>&asset_id=<%= element.id %>" title="<%= typeof t !== 'undefined' ? t('assetTransfer.title') : 'Transfer' %>"><i class="fas fa-exchange-alt"></i></a>
+                            <% } %>
+                          </div>
+                        </td>
+                      </tr>
+                      <% }) %>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<%- include('./partials/footer') %>

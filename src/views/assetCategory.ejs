@@ -1,18 +1,21 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('assetCategory.title') : 'Asset Categories' %></h1>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.management') : 'Management', url: '#' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.categories') : 'Categories' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('assetCategory.title') : 'Asset Categories' %></h1>
+          <div class="page-header-actions" id="bt">
+            <% if(typeof locals.user != 'undefined') { %>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+              <i class="fas fa-plus"></i>
+              <%= typeof t !== 'undefined' ? t('assetCategory.add') : 'Add Category' %>
+            </button>
+            <% } %>
           </div>
-          <div class="col-sm-6">
-            <div id="bt" class="float-sm-right">
-              <% if(typeof locals.user != 'undefined') { %>
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
-                <i class="fas fa-plus"></i>
-                <%= typeof t !== 'undefined' ? t('assetCategory.add') : 'Add Category' %>
-              </button>
-              <% } %>
-            </div>
-          </div>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -31,10 +34,11 @@
             <% } %> 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('assetCategory.tableTitle') : 'Asset Categories' %></h3>
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('assetCategory.tableTitle') : 'Asset Categories' %></h3>
               </div>
-              <div class="card-body">
-                <table id="categoriesTable" class="table table-bordered table-striped">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="categoriesTable" class="table table-bordered table-hover mb-0">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -49,6 +53,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!categories || categories.length === 0) { %>
+                    <tr>
+                      <td colspan="<%= typeof locals.user != 'undefined' ? 7 : 6 %>" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.categories') : 'No categories yet' %></p>
+                        <% if(typeof locals.user != 'undefined') { %><a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstCategory') : 'Add first category' %></a><% } %>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% (categories || []).forEach((el, i)=> { %>
                     <tr>
                       <td><%= i+1 %></td>
@@ -126,8 +139,10 @@
                       </div>
                     </div>
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>

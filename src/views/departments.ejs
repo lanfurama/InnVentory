@@ -1,18 +1,20 @@
 <%- include('./partials/header') %> 
-<%- include('./partials/nav') %> 
-          <div class="col-sm-6">
-            <h1><%= typeof t !== 'undefined' ? t('departments.title') : 'Departments' %></h1>
+<%- include('./partials/nav') %>
+        <%- include('./partials/breadcrumb', { items: [
+          { label: typeof t !== 'undefined' ? t('breadcrumb.home') : 'Home', url: '/' },
+          { label: typeof t !== 'undefined' ? t('breadcrumb.departments') : 'Departments' }
+        ] }) %>
+        <div class="page-header-flex">
+          <h1 class="page-title"><%= typeof t !== 'undefined' ? t('departments.title') : 'Departments' %></h1>
+          <div class="page-header-actions" id="bt">
+            <% if(typeof locals.user != 'undefined') { %>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+              <i class="fas fa-plus"></i>
+              <%= typeof t !== 'undefined' ? t('departments.add') : 'Add Department' %>
+            </button>
+            <% } %>
           </div>
-          <div class="col-sm-6">
-            <div id="bt" class="float-sm-right">
-              <% if(typeof locals.user != 'undefined') { %>
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
-                <i class="fas fa-plus"></i>
-                <%= typeof t !== 'undefined' ? t('departments.add') : 'Add Department' %>
-              </button>
-              <% } %>
-            </div>
-          </div>
+        </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -31,26 +33,42 @@
             <% } %> 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><%= typeof t !== 'undefined' ? t('departments.tableTitle') : 'Departments' %></h3>
+                <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('departments.tableTitle') : 'Departments' %></h3>
               </div>
-              <div class="card-body">
-                <table id="departmentsTable" class="table table-bordered table-striped">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="departmentsTable" class="table table-bordered table-hover mb-0">
                   <thead>
                     <tr>
                       <th>No</th>
                       <th><%= typeof t !== 'undefined' ? t('departments.name') : 'Name' %></th>
                       <th><%= typeof t !== 'undefined' ? t('departments.code') : 'Code' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('departments.assets') : 'Assets' %></th>
                       <% if(typeof locals.user != 'undefined') { %>
                       <th><%= typeof t !== 'undefined' ? t('common.action') : 'Action' %></th>
                       <% } %>
                     </tr>
                   </thead>
                   <tbody>
+                    <% if (!departments || departments.length === 0) { %>
+                    <tr>
+                      <td colspan="<%= typeof locals.user != 'undefined' ? 5 : 4 %>" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.departments') : 'No departments yet' %></p>
+                        <% if(typeof locals.user != 'undefined') { %><a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstDepartment') : 'Add first department' %></a><% } %>
+                      </td>
+                    </tr>
+                    <% } else { %>
                     <% (departments || []).forEach((el, i)=> { %>
+                    <% const assetCount = typeof countByDeptMap !== 'undefined' && countByDeptMap[el.id] !== undefined ? countByDeptMap[el.id] : 0; %>
                     <tr>
                       <td><%= i+1 %></td>
                       <td><%= el.name %></td>
                       <td><%= el.code %></td>
+                      <td>
+                        <span class="mr-2"><%= assetCount %></span>
+                        <a href="/departments/<%= el.id %>/assets" class="btn btn-sm btn-outline-primary"><%= typeof t !== 'undefined' ? t('departments.viewAssets') : 'View assets' %></a>
+                      </td>
                       <% if(typeof locals.user != 'undefined') { %>
                       <td>
                         <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit<%= el.id %>"><i class="fas fa-edit"></i></button>
@@ -105,8 +123,10 @@
                       </div>
                     </div>
                     <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>

@@ -11,22 +11,8 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto align-items-center">
-      <li class="nav-item d-none d-md-block">
-        <div class="input-group input-group-sm" style="max-width: 220px;">
-          <input type="text" class="form-control" placeholder="<%= typeof t !== 'undefined' ? t('nav.searchPlaceholder') : 'Search...' %>" aria-label="Search">
-          <div class="input-group-append">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
-          </div>
-        </div>
-      </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" title="<%= typeof t !== 'undefined' ? t('nav.notifications') : 'Notifications' %>">
-          <i class="fas fa-bell"></i>
-          <span class="badge badge-danger navbar-badge">0</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
+        <a class="nav-link" href="/reports" title="<%= typeof t !== 'undefined' ? t('nav.help') : 'Help' %>"><i class="fas fa-question-circle"></i></a>
       </li>
       <li class="nav-item">
         <a class="nav-link">
@@ -137,6 +123,12 @@
                 <% } %>
                   <i class="far fa-circle nav-icon"></i>
                   <p><%= typeof t !== 'undefined' ? t('nav.assetMaintenance') : 'Maintenance' %></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/departments" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p><%= typeof t !== 'undefined' ? t('nav.assetsByDepartment') : 'By department' %></p>
                 </a>
               </li>
             </ul>
@@ -283,5 +275,4 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-        <div class="row mb-2">
         <div class="row mb-2">

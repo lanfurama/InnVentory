@@ -56,7 +56,10 @@ $(() => {
     $('#departmentsTable').DataTable({ responsive: true, autoWidth: false });
   }
   if ($('#departmentAssetsTable').length) {
-    $('#departmentAssetsTable').DataTable({ responsive: true, autoWidth: false });
+    const deptAssetsDt = $('#departmentAssetsTable').DataTable({ responsive: true, autoWidth: false });
+    $('#departmentAssetsSearch').on('keyup', function () {
+      deptAssetsDt.search(this.value).draw();
+    });
   }
   if ($('#categoriesTable').length) {
     $('#categoriesTable').DataTable({ responsive: true, autoWidth: false });

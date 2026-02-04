@@ -181,6 +181,7 @@
     "assets": "Thiết bị",
     "viewAssets": "Xem thiết bị",
     "assetsOf": "Thiết bị của {{name}}",
+    "filterByNameOrCode": "Tìm theo tên hoặc mã",
     "confirmDelete": "Bạn có chắc muốn xóa {{name}}?",
     "nameRequired": "Tên không được để trống",
     "codeRequired": "Mã không được để trống",
@@ -219,7 +220,8 @@
     "fromDeptHint": "Chọn phòng ban để chỉ hiển thị tài sản của phòng đó trong form chuyển giao.",
     "confirmDelete": "Bạn có chắc muốn xóa bản ghi chuyển giao này?",
     "assetRequired": "Vui lòng chọn tài sản",
-    "toDeptRequired": "Vui lòng chọn phòng ban đích"
+    "toDeptRequired": "Vui lòng chọn phòng ban đích",
+    "selectedFromDeptListHint": "Bạn đang chuyển thiết bị đã chọn từ danh sách phòng ban."
   },
   "reports": {
     "overview": "Báo cáo tài chính & Phân tích",

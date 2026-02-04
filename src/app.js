@@ -49,12 +49,13 @@ app.use(
   }),
 );
 
-// Expose user/us to all views (for nav and error pages using main layout)
+// Expose user/us and path to all views (for nav and error pages using main layout)
 app.use((req, res, next) => {
   if (req.session && req.session.user) {
     if (req.session.user.role === 'superadmin') res.locals.user = req.session.user.email;
     else res.locals.us = req.session.user.email;
   }
+  res.locals.path = req.path;
   next();
 });
 

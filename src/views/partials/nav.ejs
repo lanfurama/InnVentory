@@ -78,12 +78,12 @@
               </p>
             </a>
           </li>
-          <% const assetTitle = typeof t !== 'undefined' ? t('asset.title') : 'Assets'; const assetDetailTitle = typeof t !== 'undefined' ? t('assetDetail.title') : 'Asset Detail'; const transferTitle = typeof t !== 'undefined' ? t('assetTransfer.title') : 'Transfers'; const maintTitle = typeof t !== 'undefined' ? t('assetMaintenance.title') : 'Maintenance'; if(locals.title == assetTitle || locals.title == assetDetailTitle || locals.title == transferTitle || locals.title == maintTitle) { %>
+          <% const assetTitle = typeof t !== 'undefined' ? t('asset.title') : 'Assets'; const assetDetailTitle = typeof t !== 'undefined' ? t('assetDetail.title') : 'Asset Detail'; const transferTitle = typeof t !== 'undefined' ? t('assetTransfer.title') : 'Transfers'; const maintTitle = typeof t !== 'undefined' ? t('assetMaintenance.title') : 'Maintenance'; const isByDeptPage = (typeof locals.path !== 'undefined' && (locals.path === '/departments' || (locals.path && locals.path.match(/^\/departments\/\d+\/assets$/)))); const assetsMenuOpen = (locals.title == assetTitle || locals.title == assetDetailTitle || locals.title == transferTitle || locals.title == maintTitle || isByDeptPage); if(assetsMenuOpen) { %>
           <li class="nav-item menu-open">
           <% } else { %>
           <li class="nav-item">
           <% } %>
-            <% if(locals.title == assetTitle || locals.title == assetDetailTitle || locals.title == transferTitle || locals.title == maintTitle) { %>
+            <% if(assetsMenuOpen) { %>
             <a href="#" class="nav-link active">
             <% } else { %>
             <a href="#" class="nav-link">
@@ -126,7 +126,11 @@
                 </a>
               </li>
               <li class="nav-item">
+                <% if(typeof isByDeptPage !== 'undefined' && isByDeptPage) { %>
+                <a href="/departments" class="nav-link active">
+                <% } else { %>
                 <a href="/departments" class="nav-link">
+                <% } %>
                   <i class="far fa-circle nav-icon"></i>
                   <p><%= typeof t !== 'undefined' ? t('nav.assetsByDepartment') : 'By department' %></p>
                 </a>

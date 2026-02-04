@@ -181,6 +181,7 @@
     "assets": "Assets",
     "viewAssets": "View assets",
     "assetsOf": "Assets of {{name}}",
+    "filterByNameOrCode": "Search by name or code",
     "confirmDelete": "Are you sure you want to delete {{name}}?",
     "nameRequired": "Name is required",
     "codeRequired": "Code is required",
@@ -219,7 +220,8 @@
     "fromDeptHint": "Select a department to show only its assets in the transfer form.",
     "confirmDelete": "Are you sure you want to delete this transfer record?",
     "assetRequired": "Please select an asset",
-    "toDeptRequired": "Please select destination department"
+    "toDeptRequired": "Please select destination department",
+    "selectedFromDeptListHint": "You are transferring the asset selected from the department list."
   },
   "reports": {
     "overview": "Financial Reporting & Analytics",

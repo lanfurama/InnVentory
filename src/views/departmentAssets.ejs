@@ -22,8 +22,11 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header">
+              <div class="card-header d-flex flex-wrap align-items-center justify-content-between">
                 <h3 class="card-title mb-0"><%= typeof t !== 'undefined' ? t('asset.tableTitle') : 'Assets' %> (<%= (assets || []).length %>)</h3>
+                <% if (assets && assets.length > 0) { %>
+                <input type="text" id="departmentAssetsSearch" class="form-control form-control-sm" style="max-width: 220px;" placeholder="<%= typeof t !== 'undefined' && t('departments.filterByNameOrCode') ? t('departments.filterByNameOrCode') : 'Search by name or code' %>" aria-label="<%= typeof t !== 'undefined' && t('departments.filterByNameOrCode') ? t('departments.filterByNameOrCode') : 'Search by name or code' %>">
+                <% } %>
               </div>
               <div class="card-body p-0">
                 <div class="table-responsive">

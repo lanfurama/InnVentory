@@ -127,6 +127,9 @@
           <form action="/asset-transfers" method="post">
             <input type="hidden" name="from_dept_id" value="<%= typeof selectedFromDeptId !== 'undefined' && selectedFromDeptId ? selectedFromDeptId : '' %>">
             <div class="modal-body">
+              <% if (typeof selectedAssetId !== 'undefined' && selectedAssetId) { %>
+              <p class="text-muted small mb-2"><%= typeof t !== 'undefined' && t('assetTransfer.selectedFromDeptListHint') ? t('assetTransfer.selectedFromDeptListHint') : 'You are transferring the asset selected from the department list.' %></p>
+              <% } %>
               <div class="form-group">
                 <label><%= typeof t !== 'undefined' ? t('assetTransfer.asset') : 'Asset' %></label>
                 <select name="asset_id" class="form-control" required>
@@ -141,7 +144,9 @@
                 <select name="to_dept_id" class="form-control" required>
                   <option value=""><%= typeof t !== 'undefined' ? t('common.select') : 'Select' %></option>
                   <% (departments || []).forEach(d => { %>
+                  <% if (typeof selectedFromDeptId === 'undefined' || selectedFromDeptId !== d.id) { %>
                   <option value="<%= d.id %>"><%= d.name %> (<%= d.code %>)</option>
+                  <% } %>
                   <% }) %>
                 </select>
               </div>

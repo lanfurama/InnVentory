@@ -7,7 +7,7 @@ const getAll = async () => {
     FROM public.assets a
     LEFT JOIN public.asset_categories c ON a.category_id = c.id
     LEFT JOIN public.departments d ON a.department_id = d.id
-    ORDER BY a.asset_code
+    ORDER BY a.created_at DESC NULLS LAST
   `);
   return result.rows;
 };

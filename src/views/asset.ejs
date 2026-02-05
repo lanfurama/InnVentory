@@ -100,13 +100,14 @@
                       <th><%= typeof t !== 'undefined' ? t('asset.location') : 'LOCATION' %></th>
                       <th><%= typeof t !== 'undefined' ? t('asset.assignee') : 'ASSIGNEE' %></th>
                       <th><%= typeof t !== 'undefined' ? t('asset.status') : 'STATUS' %></th>
+                      <th><%= typeof t !== 'undefined' ? t('asset.addDate') : 'DATE ADDED' %></th>
                       <th><%= typeof t !== 'undefined' ? t('common.action') : 'Action' %></th>
                     </tr>
                   </thead>
                   <tbody>
                     <% if (!assets || assets.length === 0) { %>
                     <tr>
-                      <td colspan="8" class="text-center py-5">
+                      <td colspan="9" class="text-center py-5">
                         <i class="fas fa-inbox fa-3x text-muted mb-2 d-block"></i>
                         <p class="text-muted mb-2"><%= typeof t !== 'undefined' ? t('emptyState.assets') : 'No assets yet' %></p>
                         <% if(typeof locals.user != 'undefined') { %><a href="#" data-toggle="modal" data-target="#add" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('emptyState.addFirstAsset') : 'Add first asset' %></a><% } %>
@@ -142,6 +143,7 @@
                           <%= element.status === 'disposed' ? (typeof t !== 'undefined' ? t('asset.statusDisposed') : 'Retired') : element.status === 'maintenance' ? (typeof t !== 'undefined' ? t('asset.statusMaintenance') : 'Under Repair') : element.status === 'transferred' ? 'Transferred' : (typeof t !== 'undefined' ? t('asset.statusActive') : 'In Use') %>
                         </span>
                       </td>
+                      <td data-order="<%= element.created_at ? new Date(element.created_at).getTime() : 0 %>"><%= element.created_at && typeof moment !== 'undefined' ? moment(element.created_at).format('DD/MM/YYYY') : (element.created_at ? new Date(element.created_at).toISOString().slice(0,10) : '-') %></td>
                       <td>
                         <div class="btn-group">
                           <a class="btn btn-sm btn-outline-primary" href="/assets/<%= element.id %>" title="<%= typeof t !== 'undefined' ? t('common.view') : 'View' %>"><i class="fas fa-eye"></i></a>

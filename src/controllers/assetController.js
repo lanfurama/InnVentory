@@ -46,6 +46,7 @@ const getAssets = async (req, res) => {
     underRepairCount,
     importSuccess,
     importError,
+    moment,
   });
 };
 
@@ -155,6 +156,7 @@ const addAsset = [
         totalAssets,
         inUseCount,
         underRepairCount,
+        moment,
       });
     }
     const {
@@ -220,6 +222,7 @@ const updateAsset = [
         totalAssets,
         inUseCount,
         underRepairCount,
+        moment,
       });
     }
     const {

@@ -136,6 +136,7 @@
     "importFileHint": "Upload .xlsx or .xls file. Row 1 = headers. Required: asset_code, name. Category and department by code.",
     "downloadTemplate": "Download template",
     "importFileRequired": "Please select an Excel file.",
+    "addDate": "Date Added",
     "importInvalidFile": "Invalid or unreadable file.",
     "importNoRows": "No data rows in file.",
     "importSuccessCount": "Successfully imported {{count}} asset(s)."

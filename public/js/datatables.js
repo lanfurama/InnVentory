@@ -29,6 +29,7 @@ $(() => {
     const assetsDt = $('#assetsTable').DataTable({
       responsive: true,
       autoWidth: false,
+      order: [[7, 'desc']], // Sort by "Date Added" column (index 7), newest first
       dom: "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
       language: {
         info: 'Showing _START_ to _END_ of _TOTAL_ entries',

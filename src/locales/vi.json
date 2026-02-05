@@ -136,6 +136,7 @@
     "importFileHint": "Tải lên file .xlsx hoặc .xls. Dòng đầu là tiêu đề cột. Bắt buộc: asset_code, name. Danh mục và phòng ban nhập theo mã.",
     "downloadTemplate": "Tải file mẫu",
     "importFileRequired": "Vui lòng chọn file Excel.",
+    "addDate": "Ngày thêm",
     "importInvalidFile": "File không hợp lệ hoặc không đọc được.",
     "importNoRows": "File không có dòng dữ liệu.",
     "importSuccessCount": "Đã import thành công {{count}} tài sản."
